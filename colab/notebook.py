@@ -52,7 +52,7 @@ fragments["write_render.py"] = (
 fragments[
     "download_environment_map"
 ] = """
-!wget -nc https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/1k/museum_of_ethnography_1k.exr
+!wget -nc https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/museum_of_ethnography_1k.hdr
 """
 
 fragments[

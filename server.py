@@ -67,7 +67,7 @@ class WebSocket:
 
 if __name__ == "__main__":
     ctx = Context(width=960, height=540, sample_per_frame=64)
-    ctx.bind_data(env_map_path="museum_of_ethnography_1k.exr")
+    ctx.bind_data(env_map_path="museum_of_ethnography_1k.hdr")
     ctx.create_shader()
     ws = WebSocket(ctx)
     asyncio.run(ws.main("127.0.0.1", 8030))

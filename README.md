@@ -42,7 +42,7 @@ pip install -r requirements_dev.txt
 ## 環境マップのダウンロード
 
 ```bash
-wget -nc https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/1k/museum_of_ethnography_1k.exr
+wget -nc https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/museum_of_ethnography_1k.hdr
 ```
 
 ## サーバの起動

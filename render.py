@@ -1,5 +1,4 @@
 import io
-import os
 from string import Template
 
 import cv2
@@ -52,7 +51,6 @@ class Context:
         seed_image.bind_to_image(3)
 
         # 環境マップ画像
-        os.environ["OPENCV_IO_ENABLE_OPENEXR"] = "1"
         env_map = cv2.imread(env_map_path, cv2.IMREAD_UNCHANGED)
         env_map = cv2.cvtColor(env_map, cv2.COLOR_BGRA2RGBA)
         env_map = env_map.reshape((env_map.shape[1], env_map.shape[0], 4))
