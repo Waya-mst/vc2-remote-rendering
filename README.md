@@ -26,7 +26,7 @@ deactivate
 
 仮想環境を有効化した状態で以下のコマンドを実行：
 ```bash
-pip intall -r requirements.txt
+pip install -r requirements.txt
 ```
 
 なお，`requirements.txt` は以下のコマンドで生成されている：
@@ -36,7 +36,7 @@ pip freeze > requirements.txt
 
 開発環境の場合は，`requirements_dev.txt` を用いてインストールする（black, pyflakes, nbformat の依存パッケージが含まれる）：
 ```bash
-pip intall -r requirements_dev.txt
+pip install -r requirements_dev.txt
 ```
 
 ## 環境マップのダウンロード
