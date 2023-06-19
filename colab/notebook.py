@@ -101,18 +101,27 @@ fragments[
 !python server.py
 """
 
+
+def new_code_cell(identifier):
+    code_cell = nbformat.v4.new_code_cell(fragments[identifier])
+    # all cells have an id field which must be a string of length 1-64 with alphanumeric, -, and _ as legal characters to use.
+    # cf.) https://nbformat.readthedocs.io/en/latest/format_description.html#cell-ids
+    code_cell["id"] = identifier.replace(".", "_")
+    return code_cell
+
+
 notebook["cells"] = [
-    nbformat.v4.new_code_cell(fragments["install_driver"]),
-    nbformat.v4.new_code_cell(fragments["write_requirements.txt"]),
-    nbformat.v4.new_code_cell(fragments["install_packages"]),
-    nbformat.v4.new_code_cell(fragments["show_moderngl_config"]),
-    nbformat.v4.new_code_cell(fragments["write_compute_shader.glsl"]),
-    nbformat.v4.new_code_cell(fragments["write_server.py"]),
-    nbformat.v4.new_code_cell(fragments["write_render.py"]),
-    nbformat.v4.new_code_cell(fragments["download_environment_map"]),
-    nbformat.v4.new_code_cell(fragments["get_server_region"]),
-    nbformat.v4.new_code_cell(fragments["generate_access_link"]),
-    nbformat.v4.new_code_cell(fragments["start_up_server"]),
+    new_code_cell("install_driver"),
+    new_code_cell("write_requirements.txt"),
+    new_code_cell("install_packages"),
+    new_code_cell("show_moderngl_config"),
+    new_code_cell("write_compute_shader.glsl"),
+    new_code_cell("write_server.py"),
+    new_code_cell("write_render.py"),
+    new_code_cell("download_environment_map"),
+    new_code_cell("get_server_region"),
+    new_code_cell("generate_access_link"),
+    new_code_cell("start_up_server"),
 ]
 
 with open(directory_path + "/websocket_server.ipynb", "w") as f:
