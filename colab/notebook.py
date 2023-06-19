@@ -1,10 +1,6 @@
-import os
 import re
 
 import nbformat
-
-
-directory_path = os.path.dirname(__file__)
 
 notebook = nbformat.v4.new_notebook()
 
@@ -20,7 +16,7 @@ fragments[
 """
 
 fragments["write_requirements.txt"] = "%%file requirements.txt\n" + re.sub(
-    "==.*", "", open(directory_path + "/../requirements.txt").read()
+    "==.*", "", open("requirements.txt").read()
 )
 
 fragments[
@@ -36,23 +32,26 @@ fragments[
 !python -m moderngl
 """
 
+fragments[
+    "make_directories"
+] = """
+!mkdir -p app
+!mkdir -p assets/glsl
+"""
+
 fragments["write_compute_shader.glsl"] = (
-    "%%file compute_shader.glsl\n"
-    + open(directory_path + "/../compute_shader.glsl").read()
+    "%%file assets/glsl/compute_shader.glsl\n"
+    + open("assets/glsl/compute_shader.glsl").read()
 )
 
-fragments["write_server.py"] = (
-    "%%file server.py\n" + open(directory_path + "/../server.py").read()
-)
+fragments["write_server.py"] = "%%file app/server.py\n" + open("app/server.py").read()
 
-fragments["write_render.py"] = (
-    "%%file render.py\n" + open(directory_path + "/../render.py").read()
-)
+fragments["write_render.py"] = "%%file app/render.py\n" + open("app/render.py").read()
 
 fragments[
     "download_environment_map"
 ] = """
-!wget -nc https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/museum_of_ethnography_1k.hdr
+!(mkdir -p assets/hdr && cd assets/hdr && curl -O https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/museum_of_ethnography_1k.hdr)
 """
 
 fragments[
@@ -98,7 +97,7 @@ print(public_url.replace("https", "wss"))
 fragments[
     "start_up_server"
 ] = """
-!python server.py
+!python app/server.py
 """
 
 
@@ -115,6 +114,7 @@ notebook["cells"] = [
     new_code_cell("write_requirements.txt"),
     new_code_cell("install_packages"),
     new_code_cell("show_moderngl_config"),
+    new_code_cell("make_directories"),
     new_code_cell("write_compute_shader.glsl"),
     new_code_cell("write_server.py"),
     new_code_cell("write_render.py"),
@@ -124,5 +124,5 @@ notebook["cells"] = [
     new_code_cell("start_up_server"),
 ]
 
-with open(directory_path + "/websocket_server.ipynb", "w") as f:
+with open("colab/websocket_server.ipynb", "w") as f:
     nbformat.write(notebook, f)

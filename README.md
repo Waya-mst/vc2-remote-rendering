@@ -42,21 +42,21 @@ pip install -r requirements_dev.txt
 ## 環境マップのダウンロード
 
 ```bash
-wget -nc https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/museum_of_ethnography_1k.hdr
+(mkdir -p assets/hdr && cd assets/hdr && curl -O https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/museum_of_ethnography_1k.hdr)
 ```
 
 ## サーバの起動
 
 仮想環境を有効化し，依存パッケージもインストールした状態で以下のコマンドを実行：
 ```bash
-python server.py
+python app/server.py
 ```
 
 すると，ウェブソケットサーバが起動し，リッスン状態になる．
 
 ## ブラウザからのアクセス
 
-`index.html` をブラウザで開き，start ボタンを押下すると，レンダリングが開始される．
+`assets/html/index.html` をブラウザで開き，start ボタンを押下すると，レンダリングが開始される．
 
 画像領域にイベントリスナーが存在し，以下の挙動に対応している：
 - 左ボタンでドラッグするとカメラ回転
