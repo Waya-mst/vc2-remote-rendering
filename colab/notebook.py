@@ -1,0 +1,119 @@
+import os
+import re
+
+import nbformat
+
+
+directory_path = os.path.dirname(__file__)
+
+notebook = nbformat.v4.new_notebook()
+
+notebook.metadata.accelerator = "GPU"
+notebook.metadata.kernelspec = {"name": "python3", "display_name": "Python 3"}
+
+fragments = {}
+
+fragments[
+    "install_driver"
+] = """
+!apt-get install libnvidia-gl-$(grep -oP 'NVIDIA UNIX x86_64 Kernel Module\s+\K[\d.]+(?=\s+)' /proc/driver/nvidia/version | grep -oE '^[0-9]+')
+"""
+
+fragments["write_requirements.txt"] = "%%file requirements.txt\n" + re.sub(
+    "==.*", "", open(directory_path + "/../requirements.txt").read()
+)
+
+fragments[
+    "install_packages"
+] = """
+!pip install -r requirements.txt
+!pip install pyngrok
+"""
+
+fragments[
+    "show_moderngl_config"
+] = """
+!python -m moderngl
+"""
+
+fragments["write_compute_shader.glsl"] = (
+    "%%file compute_shader.glsl\n"
+    + open(directory_path + "/../compute_shader.glsl").read()
+)
+
+fragments["write_server.py"] = (
+    "%%file server.py\n" + open(directory_path + "/../server.py").read()
+)
+
+fragments["write_render.py"] = (
+    "%%file render.py\n" + open(directory_path + "/../render.py").read()
+)
+
+fragments[
+    "download_environment_map"
+] = """
+!wget -nc https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/1k/museum_of_ethnography_1k.exr
+"""
+
+fragments[
+    "get_server_region"
+] = """
+import json
+from pprint import pprint
+from urllib import request
+
+ipinfo = json.loads(request.urlopen("https://ipinfo.io").read())
+pprint(ipinfo)
+
+# タイムゾーンの情報を基づき，サーバーに最も近いリージョンを見つける
+# ngrok で指定できるリージョンは下記のとおり：
+# cf.) https://ngrok.com/docs/ngrok-agent/config/#region
+timezone = ipinfo["timezone"]
+region_map = {
+    "America": "us", # United States
+    "Europe": "eu", # Europe
+    "Pacific": "ap", # Asia/Pacific
+    "Australia": "au", # Australia
+    # "": "sa", # South America
+    "Asia": "jp", # Japan
+    # "": "in", # India
+}
+region = region_map.get(timezone.split("/")[0], "us")
+"""
+
+fragments[
+    "generate_access_link"
+] = """
+from pyngrok import conf, ngrok
+
+# ngrok のトンネルのリージョンを指定
+# cf.) https://pyngrok.readthedocs.io/en/latest/index.html#setting-the-region
+conf.get_default().region = region
+
+# 433 port へのアクセスを 8030 port へフォワーディング
+public_url = ngrok.connect(8030).public_url
+print(public_url.replace("https", "wss"))
+"""
+
+fragments[
+    "start_up_server"
+] = """
+!python server.py
+"""
+
+notebook["cells"] = [
+    nbformat.v4.new_code_cell(fragments["install_driver"]),
+    nbformat.v4.new_code_cell(fragments["write_requirements.txt"]),
+    nbformat.v4.new_code_cell(fragments["install_packages"]),
+    nbformat.v4.new_code_cell(fragments["show_moderngl_config"]),
+    nbformat.v4.new_code_cell(fragments["write_compute_shader.glsl"]),
+    nbformat.v4.new_code_cell(fragments["write_server.py"]),
+    nbformat.v4.new_code_cell(fragments["write_render.py"]),
+    nbformat.v4.new_code_cell(fragments["download_environment_map"]),
+    nbformat.v4.new_code_cell(fragments["get_server_region"]),
+    nbformat.v4.new_code_cell(fragments["generate_access_link"]),
+    nbformat.v4.new_code_cell(fragments["start_up_server"]),
+]
+
+with open(directory_path + "/websocket_server.ipynb", "w") as f:
+    nbformat.write(notebook, f)

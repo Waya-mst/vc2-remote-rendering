@@ -1,0 +1,5 @@
+glcontext==2.3.7
+moderngl==5.8.2
+numpy==1.24.3
+opencv-python==4.7.0.72
+websockets==11.0.3

@@ -1,0 +1,19 @@
+<html>
+  <body>
+    <p>
+      <span>Websocket URL (ws://, wss://):</span>
+      <input id="endpoint" type="url" value="ws://127.0.0.1:8030" />
+      <input id="start" type="button" onclick="session.start()" value="start" />
+      <input id="end" type="button" onclick="session.end()" value="end" />
+    </p>
+    <p>
+      <span>Current sample per pixel: </span>
+      <input id="sample" type="text" value="0" readonly />
+    </p>
+    <p>
+      <canvas id="canvas"></canvas>
+    </p>
+
+    <script src="session-manager.js"></script>
+  </body>
+</html>
