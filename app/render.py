@@ -62,7 +62,9 @@ class Context:
 
     def create_shader(self):
         self.compute_shader = self.context.compute_shader(
-            Template(open("assets/glsl/compute_shader.glsl").read()).substitute(
+            Template(
+                open("assets/glsl/compute_shader.glsl", encoding="utf-8").read()
+            ).substitute(
                 width=self.width, height=self.height, sample_max=self.sample_per_frame
             )
         )

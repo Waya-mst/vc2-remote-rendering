@@ -16,7 +16,7 @@ fragments[
 """
 
 fragments["write_requirements.txt"] = "%%file requirements.txt\n" + re.sub(
-    "==.*", "", open("requirements.txt").read()
+    "==.*", "", open("requirements.txt", encoding="utf-8").read()
 )
 
 fragments[
@@ -41,12 +41,16 @@ fragments[
 
 fragments["write_compute_shader.glsl"] = (
     "%%file assets/glsl/compute_shader.glsl\n"
-    + open("assets/glsl/compute_shader.glsl").read()
+    + open("assets/glsl/compute_shader.glsl", encoding="utf-8").read()
 )
 
-fragments["write_server.py"] = "%%file app/server.py\n" + open("app/server.py").read()
+fragments["write_server.py"] = (
+    "%%file app/server.py\n" + open("app/server.py", encoding="utf-8").read()
+)
 
-fragments["write_render.py"] = "%%file app/render.py\n" + open("app/render.py").read()
+fragments["write_render.py"] = (
+    "%%file app/render.py\n" + open("app/render.py", encoding="utf-8").read()
+)
 
 fragments[
     "download_environment_map"
@@ -124,5 +128,5 @@ notebook["cells"] = [
     new_code_cell("start_up_server"),
 ]
 
-with open("colab/websocket_server.ipynb", "w") as f:
+with open("colab/websocket_server.ipynb", "w", encoding="utf-8") as f:
     nbformat.write(notebook, f)
