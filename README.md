@@ -1,3 +1,82 @@
+## レポジトリ構成
+
+リポジトリは下記のように構成されている：
+
+```bash
+.
+├── app
+│   ├── render.py
+│   └── server.py
+├── assets
+│   ├── glsl
+│   │   └── compute_shader.glsl
+│   ├── hdr
+│   │   └── museum_of_ethnography_1k.hdr
+│   ├── html
+│   │   └── index.html
+│   └── js
+│       └── session-manager.js
+├── colab
+│   ├── notebook.py
+│   └── websocket_server.ipynb
+├── Makefile
+├── README.md
+├── requirements_dev.txt
+└── requirements.txt
+
+7 directories, 12 files
+```
+
+各ファイルの内容を以下に示す：
+
+- app/render.py
+
+  ModernGL という Python モジュールを使用して OpenGL コンテキストを生成する．生成したコンテキストを用いて，レンダリングの処理を実行する．
+
+- app/server.py
+
+  WebSocket サーバを起動する．クライアントからのリクエストに応じて WebSocket のコネクションを確立し，タスクが生成される．このタスクは，キャンセルのリクエストがくるまで停止しない無限ループとなっており，ループ中にレンダリングとその結果画像の送信が実行される．このループ中のレンダリングにおいて，サンプリングは継続される．WebSocket のコネクション確立後，クライアントから何らかのリクエストがあると，タスクをキャンセルして新しいタスクを生成する．新しいタスクが生成された時点で，サンプリング進捗は０に戻る．
+
+- assets/glsl/compute_shader.glsl
+
+  OpenGL のコンピュートシェーダーの内容が記述されている．GPU パストレーシングが実装されている．
+
+- assets/hdr/
+
+  イメージベーストライティングに使用する環境マップを格納する．
+
+- assets/html/index.html
+
+  WebSocket サーバと通信する WEB ページ．
+
+- assets/js/session-manager.js
+
+  WebSocket サーバに対してリクエストを送信したり，レスポンスを受信するための処理が記述されている．
+
+- colab/notebook.py
+
+  Google Colaboratory で実行可能なノートブックファイル (.ipynb) を生成するスクリプトが記述されている．
+
+- colab/websocket_server.ipynb
+
+  自動生成されたノートブックファイル．
+
+- Makefile
+
+  Python ファイルのフォーマットおよびリントを実行する際のターゲットが記述されている．
+
+- README.md
+
+  本ファイル．
+
+- requirements.txt
+
+  アプリケーションの実行に必要な python のパッケージが記述されている．
+
+- requirements_dev.txt
+
+  アプリケーションの開発に必要な python のパッケージが記述されている．
+
 ## Python3 バージョン
 
 ```bash
