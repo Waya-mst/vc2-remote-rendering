@@ -6,8 +6,8 @@ PYTHON_FILES=$(shell \
 	-exec echo -n {}" " \; \
 )
 
-pyflakes:
-	pyflakes ${PYTHON_FILES}
-
 black:
 	black ${PYTHON_FILES}
+
+pyflakes:
+	pyflakes ${PYTHON_FILES}
