@@ -146,7 +146,7 @@ python app/server.py
 
 仮想環境を有効化し，依存パッケージもインストールした状態で以下のコマンドを実行：
 ```bash
-python colab/notebook.py
+make notebook
 ```
 
 すると，`colab/websocket_server.ipynb` が生成される．

@@ -1,4 +1,5 @@
 import re
+import sys
 
 import nbformat
 
@@ -128,5 +129,4 @@ notebook["cells"] = [
     new_code_cell("start_up_server"),
 ]
 
-with open("colab/websocket_server.ipynb", "w", encoding="utf-8") as f:
-    nbformat.write(notebook, f)
+nbformat.write(notebook, sys.stdout)

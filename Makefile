@@ -14,3 +14,6 @@ black-check:
 
 pyflakes:
 	pyflakes ${PYTHON_FILES}
+
+notebook:
+	python colab/notebook.py > colab/websocket_server.ipynb
