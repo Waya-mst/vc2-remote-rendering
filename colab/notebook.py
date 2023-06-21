@@ -68,7 +68,7 @@ from urllib import request
 ipinfo = json.loads(request.urlopen("https://ipinfo.io").read())
 pprint(ipinfo)
 
-# タイムゾーンの情報を基づき，サーバーに最も近いリージョンを見つける
+# タイムゾーンの情報に基づき，サーバーに最も近いリージョンを見つける
 # ngrok で指定できるリージョンは下記のとおり：
 # cf.) https://ngrok.com/docs/ngrok-agent/config/#region
 timezone = ipinfo["timezone"]
