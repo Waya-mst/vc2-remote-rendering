@@ -138,6 +138,18 @@ class SessionManager {
       this.websocket = null;
     }
   }
+
+  save() {
+    const aTag = document.createElement("a");
+    const dataURL = this.canvas.toDataURL("image/png");
+    const samplePerPixel = document.getElementById("sample").value;
+    aTag.setAttribute(
+      "href",
+      dataURL.replace(/^data:image\/png/, "data:application/octet-stream")
+    );
+    aTag.setAttribute("download", "image_" + samplePerPixel + "_spp.png");
+    aTag.click();
+  }
 }
 
 const session = new SessionManager();
