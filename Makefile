@@ -17,3 +17,6 @@ pyflakes:
 
 notebook:
 	python colab/notebook.py > colab/websocket_server.ipynb
+
+notebook-check:
+	python colab/notebook.py | diff colab/websocket_server.ipynb -
