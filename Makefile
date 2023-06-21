@@ -9,5 +9,8 @@ PYTHON_FILES=$(shell \
 black:
 	black ${PYTHON_FILES}
 
+black-check:
+	black --check ${PYTHON_FILES}
+
 pyflakes:
 	pyflakes ${PYTHON_FILES}
