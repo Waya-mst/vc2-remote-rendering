@@ -6,8 +6,17 @@ PYTHON_FILES=$(shell \
 	-exec echo -n {}" " \; \
 )
 
+black:
+	black ${PYTHON_FILES}
+
+black-check:
+	black --check ${PYTHON_FILES}
+
 pyflakes:
 	pyflakes ${PYTHON_FILES}
 
-black:
-	black ${PYTHON_FILES}
+notebook:
+	python colab/notebook.py > colab/websocket_server.ipynb
+
+notebook-check:
+	python colab/notebook.py | diff colab/websocket_server.ipynb -
