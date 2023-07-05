@@ -59,6 +59,11 @@ class SessionManager {
       e.preventDefault();
       self.mouseButton = -1;
     });
+
+    this.maxSpp = document.getElementById("max-spp");
+    this.maxSpp.addEventListener("input", function () {
+      self.maxSpp.value = self.maxSpp.value.replace(/[^0-9]+/i, "");
+    });
   }
 
   init_websocket() {
@@ -114,6 +119,7 @@ class SessionManager {
           phi: 0,
           moveX: 0,
           moveY: 0,
+          maxSpp: this.maxSpp.value,
         })
       );
     } else {
@@ -126,6 +132,7 @@ class SessionManager {
             phi: 0,
             moveX: 0,
             moveY: 0,
+            maxSpp: this.maxSpp.value,
           })
         );
       });
