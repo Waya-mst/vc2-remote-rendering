@@ -21,15 +21,25 @@ class WebSocket:
             print(["-", "/", "|", "\\"][i % 4], "\r", end="")
             try:
                 self.context.frame = i * self.context.sample_per_frame + 1
-                self.context.render()
                 i += 1
+                next_frame = i * self.context.sample_per_frame
+
+                if self.context.maxSpp:
+                    if next_frame > int(self.context.maxSpp):
+                        self.context.create_shader(
+                            int(self.context.maxSpp) % self.context.sample_per_frame
+                        )
+                        next_frame = int(self.context.maxSpp)
+
+                self.context.render()
+
                 # レンダリング結果画像を送信する（識別子：0000）
                 await websocket.send(b"0000" + self.context.get_binary().getvalue())
                 # 現在の1画素あたりのサンプル数を送信する（識別子：0001）
-                await websocket.send(b"0001" + bytes(i * self.context.sample_per_frame))
+                await websocket.send(b"0001" + bytes(next_frame))
 
                 if self.context.maxSpp:
-                    if i * self.context.sample_per_frame >= int(self.context.maxSpp):
+                    if next_frame >= int(self.context.maxSpp):
                         break
             except RuntimeError as e:
                 print("Runtime Error:", e)
