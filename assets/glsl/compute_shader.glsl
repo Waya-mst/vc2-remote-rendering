@@ -17,8 +17,8 @@ layout(local_size_x = 1, local_size_y = 1) in;
 uniform int frame;
 uniform float theta;
 uniform float phi;
-uniform float moveX;
-uniform float moveY;
+uniform float move_x;
+uniform float move_y;
 
 layout(binding = 1, rgba32f) uniform image2D input_image;
 layout(binding = 2, rgba32f) uniform image2D output_image;
@@ -261,7 +261,7 @@ void main() {
         };
 
         Ray ray = {
-            M1 * M2 * (eye + vec3(moveX, moveY, scale - 1)),
+            M1 * M2 * (eye + vec3(move_x, move_y, scale - 1)),
             M1 * M2 * (normalize(position_screen - eye)),
             vec3(1.0f),
             0,

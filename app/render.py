@@ -17,9 +17,9 @@ class Context:
         self.frame = 1
         self.theta = 0
         self.phi = 0
-        self.moveX = 0
-        self.moveY = 0
-        self.maxSpp = 0
+        self.move_x = 0
+        self.move_y = 0
+        self.max_spp = 0
 
         self.output_image = None
 
@@ -79,8 +79,8 @@ class Context:
         self.compute_shader["frame"].value = self.frame
         self.compute_shader["theta"].value = self.theta
         self.compute_shader["phi"].value = self.phi
-        self.compute_shader["moveX"].value = self.moveX
-        self.compute_shader["moveY"].value = self.moveY
+        self.compute_shader["move_x"].value = self.move_x
+        self.compute_shader["move_y"].value = self.move_y
 
         self.compute_shader.run(group_x=self.width, group_y=self.height)
 
