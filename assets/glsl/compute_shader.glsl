@@ -38,14 +38,14 @@ ivec3 groupIdx = ivec3(
 
 float scale = 1;
 
-struct ray {
+struct Ray {
     vec3 origin;    // 光線の始点
     vec3 direction; // 光線の方向ベクトル
     vec3 scatter;   // 散乱成分
     uint depth;     // 反射した回数
 };
 
-struct hit {
+struct Hit {
     float t;        // 光線の始点から衝突位置までの距離
     vec3 position;  // 衝突位置
     vec3 normal;    // 衝突位置における法線ベクトル
@@ -54,7 +54,7 @@ struct hit {
     uint material;  // 材質
 };
 
-struct sphere {
+struct Sphere {
     vec3 center;    // 球の中心
     float radius;   // 球の半径
     vec3 scatter;   // 散乱成分
@@ -75,36 +75,36 @@ float rand() {
 }
 
 // 球と光線の交点
-bool hit_sphere(const in sphere s, const in ray r, inout hit h) {
-    vec3 oc = r.origin - s.center;
-    float a = dot(r.direction, r.direction);
-    float b = dot(oc, r.direction);
-    float c = dot(oc, oc) - POW2(s.radius);
+bool hit_sphere(const in Sphere sphere, const in Ray ray, inout Hit hit) {
+    vec3 oc = ray.origin - sphere.center;
+    float a = dot(ray.direction, ray.direction);
+    float b = dot(oc, ray.direction);
+    float c = dot(oc, oc) - POW2(sphere.radius);
     float d = POW2(b) - a * c;
 
     float t;
     if (d > 0)
     {
         t = (-b - sqrt(d)) / a;
-        if (0 < t && t < h.t)
+        if (0 < t && t < hit.t)
         {
-            h.t = t;
-            h.position = r.origin + t * r.direction;
-            h.normal = normalize(h.position - s.center);
-            h.scatter = s.scatter;
-            h.emission = s.emission;
-            h.material = s.material;
+            hit.t = t;
+            hit.position = ray.origin + t * ray.direction;
+            hit.normal = normalize(hit.position - sphere.center);
+            hit.scatter = sphere.scatter;
+            hit.emission = sphere.emission;
+            hit.material = sphere.material;
             return true;
         }
         t = (-b + sqrt(d)) / a;
-        if (0 < t && t < h.t)
+        if (0 < t && t < hit.t)
         {
-            h.t = t;
-            h.position = r.origin + t * r.direction;
-            h.normal = normalize(h.position - s.center);
-            h.scatter = s.scatter;
-            h.emission = s.emission;
-            h.material = s.material;
+            hit.t = t;
+            hit.position = ray.origin + t * ray.direction;
+            hit.normal = normalize(hit.position - sphere.center);
+            hit.scatter = sphere.scatter;
+            hit.emission = sphere.emission;
+            hit.material = sphere.material;
             return true;
         }
     }
@@ -113,18 +113,18 @@ bool hit_sphere(const in sphere s, const in ray r, inout hit h) {
 }
 
 // 鏡面
-void mirror(inout ray r, const in hit h)
+void mirror(inout Ray ray, const in Hit hit)
 {
-	if (dot(-r.direction, h.normal) < 0)
+	if (dot(-ray.direction, hit.normal) < 0)
 	{
-        r.depth = DEPTH_MAX;
+        ray.depth = DEPTH_MAX;
 		return;
 	}
-    r.depth++;
-	r.origin = h.position + h.normal * DELTA;
+    ray.depth++;
+	ray.origin = hit.position + hit.normal * DELTA;
     // 課題1：鏡面の作成
-	// r.direction =
-	r.scatter *= h.scatter;
+	// ray.direction =
+	ray.scatter *= hit.scatter;
 }
 
 float fresnel(const in float n, const in float u)
@@ -134,73 +134,73 @@ float fresnel(const in float n, const in float u)
 }
 
 // ガラス面
-void glass(inout ray r, const in hit h)
+void glass(inout Ray ray, const in Hit hit)
 {
-    r.depth++;
+    ray.depth++;
 	float n = 1.5;
 	vec3 N;
-	float t = dot(-r.direction, h.normal);
+	float t = dot(-ray.direction, hit.normal);
 	if (t > 0.0f)
 	{
 		n = 1.0f / n;
-		N = h.normal;
+		N = hit.normal;
 		t = t;
 	}
 	else
 	{
 		n = n / 1.0f;
-		N = -h.normal;
+		N = -hit.normal;
 		t = -t;
 	}
-	if (rand() < fresnel(n, t) || n * length(cross(N, -r.direction)) > 1)
+	if (rand() < fresnel(n, t) || n * length(cross(N, -ray.direction)) > 1)
 	{
-		mirror(r, h);
+		mirror(ray, hit);
 	}
 	else
 	{
-		r.origin = h.position - N * DELTA;
+		ray.origin = hit.position - N * DELTA;
         // 課題2：ガラス面の作成
-		// r.direction =
-		r.scatter *= h.scatter;
+		// ray.direction =
+		ray.scatter *= hit.scatter;
 	}
 }
 
 // Image Based Lighting
-void background(inout ray r, inout hit h) {
-    r.depth = DEPTH_MAX;
-    h.emission = texture(
+void background(inout Ray ray, inout Hit hit) {
+    ray.depth = DEPTH_MAX;
+    hit.emission = texture(
         background_image,
         vec2(
-            -atan(r.direction.x, r.direction.z) / (2 * PI),
-             acos(r.direction.y) / PI
+            -atan(ray.direction.x, ray.direction.z) / (2 * PI),
+             acos(ray.direction.y) / PI
         )
     ).rgb;
 }
 
 // 完全拡散反射面
-void diffuse(inout ray r, const in hit h) {
-    if (dot(-r.direction, h.normal) < 0) {
-        r.depth = DEPTH_MAX;
-        r.scatter = vec3(0.0f);
+void diffuse(inout Ray ray, const in Hit hit) {
+    if (dot(-ray.direction, hit.normal) < 0) {
+        ray.depth = DEPTH_MAX;
+        ray.scatter = vec3(0.0f);
         return;
     }
-    r.depth++;
-    r.direction.y = sqrt(rand());
-    float d = sqrt(1 - POW2(r.direction.y));
+    ray.depth++;
+    ray.direction.y = sqrt(rand());
+    float d = sqrt(1 - POW2(ray.direction.y));
     float v = rand() * 2.0f * PI;
     vec3 ex = vec3(1.0f, 0.0f, 0.0f);
     vec3 ey = vec3(0.0f, 1.0f, 0.0f);
     vec3 ez = vec3(0.0f, 0.0f, 1.0f);
-    float dx = abs(dot(h.normal, ex));
-    float dy = abs(dot(h.normal, ey));
-    float dz = abs(dot(h.normal, ez));
+    float dx = abs(dot(hit.normal, ex));
+    float dy = abs(dot(hit.normal, ey));
+    float dz = abs(dot(hit.normal, ez));
     vec3 vy = (dy < dx) ? (dz < dy) ? ez : ey : (dz < dx) ? ez : ex;
-    vec3 vx = normalize(cross(vy, h.normal));
-    vec3 vz = normalize(cross(vx, h.normal));
+    vec3 vx = normalize(cross(vy, hit.normal));
+    vec3 vz = normalize(cross(vx, hit.normal));
 
-    r.direction = normalize(vx * d * cos(v) + h.normal * r.direction.y + vz * d * sin(v));
-    r.origin = h.position + h.normal * DELTA;
-    r.scatter *= h.scatter;
+    ray.direction = normalize(vx * d * cos(v) + hit.normal * ray.direction.y + vz * d * sin(v));
+    ray.origin = hit.position + hit.normal * DELTA;
+    ray.scatter *= hit.scatter;
 }
 
 // Tone Mapping
@@ -222,7 +222,7 @@ void main() {
     const vec3 eye = vec3(0.0f, 0.0f, 18.0f);
 
     const uint n_sphere = 2;
-    const sphere ss[n_sphere] = {
+    const Sphere spheres[n_sphere] = {
         {
             vec3(0.0f),
             4.0f,
@@ -260,14 +260,14 @@ void main() {
             eye.z - 9.0f,
         };
 
-        ray r = {
+        Ray ray = {
             M1 * M2 * (eye + vec3(moveX, moveY, scale - 1)),
             M1 * M2 * (normalize(position_screen - eye)),
             vec3(1.0f),
             0,
         };
 
-        hit h = {
+        Hit hit = {
             1000.0f,
             vec3(0.0f),
             vec3(0.0f),
@@ -276,22 +276,22 @@ void main() {
             BACKGROUND,
         };
 
-        while (r.depth < DEPTH_MAX) {
+        while (ray.depth < DEPTH_MAX) {
             for (int i = 0; i < n_sphere; i++) {
-                hit_sphere(ss[i], r, h);
+                hit_sphere(spheres[i], ray, hit);
             }
 
-            switch (h.material) {
-                case BACKGROUND: background(r, h); break;
-                case DIFFUSE: diffuse(r, h); break;
-                case MIRROR: mirror(r, h); break;
-                case GLASS: glass(r, h); break;
+            switch (hit.material) {
+                case BACKGROUND: background(ray, hit); break;
+                case DIFFUSE: diffuse(ray, hit); break;
+                case MIRROR: mirror(ray, hit); break;
+                case GLASS: glass(ray, hit); break;
             }
 
-            color_next.rgb += h.emission * r.scatter;
+            color_next.rgb += hit.emission * ray.scatter;
 
-            h.t = 10000.0f;
-            h.material = BACKGROUND;
+            hit.t = 10000.0f;
+            hit.material = BACKGROUND;
         }
 
         // 平均値の逐次計算
