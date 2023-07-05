@@ -17,7 +17,6 @@ class WebSocket:
         # キャンセルされるまでサンプリングとレンダリング結果画像の送信を繰り返す
         i = 0
         while True:
-            await asyncio.sleep(0.01)
             print(["-", "/", "|", "\\"][i % 4], "\r", end="")
             try:
                 self.context.current_sample = i * self.context.sample_per_frame + 1
@@ -33,10 +32,12 @@ class WebSocket:
 
                 self.context.render()
 
-                # レンダリング結果画像を送信する（識別子：0000）
-                await websocket.send(b"0000" + self.context.get_binary().getvalue())
-                # 現在の1画素あたりのサンプル数を送信する（識別子：0001）
-                await websocket.send(b"0001" + bytes(next_frame))
+                await asyncio.gather(
+                    # レンダリング結果画像を送信する（識別子：0000）
+                    websocket.send(b"0000" + self.context.get_binary().getvalue()),
+                    # 現在の1画素あたりのサンプル数を送信する（識別子：0001）
+                    websocket.send(b"0001" + bytes(next_frame)),
+                )
 
                 if self.context.max_spp:
                     if next_frame >= int(self.context.max_spp):
