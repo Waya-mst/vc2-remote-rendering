@@ -27,8 +27,15 @@ class WebSocket:
                 await websocket.send(b"0000" + self.context.get_binary().getvalue())
                 # 現在の1画素あたりのサンプル数を送信する（識別子：0001）
                 await websocket.send(b"0001" + bytes(i * self.context.sample_per_frame))
+
+                if self.context.maxSpp:
+                    if i * self.context.sample_per_frame >= int(self.context.maxSpp):
+                        break
             except RuntimeError as e:
                 print("Runtime Error:", e)
+                break
+            except ValueError as e:
+                print("ValueError:", e)
                 break
 
     async def echo(self, websocket):
@@ -47,6 +54,8 @@ class WebSocket:
                 self.context.moveX = message["moveX"]
             if "moveY" in message:
                 self.context.moveY = message["moveY"]
+            if "maxSpp" in message:
+                self.context.maxSpp = message["maxSpp"]
 
             if current_task is not None and not current_task.done():
                 current_task.cancel()

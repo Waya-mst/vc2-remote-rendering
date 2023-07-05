@@ -19,6 +19,7 @@ class Context:
         self.phi = 0
         self.moveX = 0
         self.moveY = 0
+        self.maxSpp = 0
 
         self.output_image = None
 
