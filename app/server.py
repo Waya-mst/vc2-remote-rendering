@@ -20,7 +20,7 @@ class WebSocket:
             await asyncio.sleep(0.01)
             print(["-", "/", "|", "\\"][i % 4], "\r", end="")
             try:
-                self.context.frame = i * self.context.sample_per_frame + 1
+                self.context.current_sample = i * self.context.sample_per_frame + 1
                 i += 1
                 next_frame = i * self.context.sample_per_frame
 

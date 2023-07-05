@@ -14,7 +14,7 @@ class Context:
         self.height = height
         self.sample_per_frame = sample_per_frame
 
-        self.frame = 1
+        self.current_sample = 1
         self.theta = 0
         self.phi = 0
         self.move_x = 0
@@ -76,7 +76,7 @@ class Context:
         if self.compute_shader is None:
             raise RuntimeError("compute_shader has not been assigned")
 
-        self.compute_shader["frame"].value = self.frame
+        self.compute_shader["current_sample"].value = self.current_sample
         self.compute_shader["theta"].value = self.theta
         self.compute_shader["phi"].value = self.phi
         self.compute_shader["move_x"].value = self.move_x

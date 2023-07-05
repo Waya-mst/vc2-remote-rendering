@@ -14,7 +14,7 @@
 
 layout(local_size_x = 1, local_size_y = 1) in;
 
-uniform int frame;
+uniform int current_sample;
 uniform float theta;
 uniform float phi;
 uniform float move_x;
@@ -217,7 +217,7 @@ vec4 gammaCorrect(const in vec4 color, const in float gamma) {
 void main() {
     xors = imageLoad(seed_image, groupIdx.xy);
 
-    vec4 color_present = (frame == 1) ? vec4(0.0f) : imageLoad(input_image, groupIdx.xy);
+    vec4 color_present = (current_sample == 1) ? vec4(0.0f) : imageLoad(input_image, groupIdx.xy);
 
     const vec3 eye = vec3(0.0f, 0.0f, 18.0f);
 
@@ -295,7 +295,7 @@ void main() {
         }
 
         // 平均値の逐次計算
-        color_present += (color_next - color_present) / (frame + i);
+        color_present += (color_next - color_present) / (current_sample + i);
     }
 
     imageStore(input_image, groupIdx.xy, color_present);
