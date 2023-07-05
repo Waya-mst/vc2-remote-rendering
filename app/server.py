@@ -55,6 +55,7 @@ class WebSocket:
             if "moveY" in message:
                 self.context.moveY = message["moveY"]
             if "maxSpp" in message:
+                self.context.create_shader()
                 self.context.maxSpp = message["maxSpp"]
 
             if current_task is not None and not current_task.done():
