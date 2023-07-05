@@ -19,6 +19,7 @@ class Context:
         self.phi = 0
         self.moveX = 0
         self.moveY = 0
+        self.maxSpp = 0
 
         self.output_image = None
 
@@ -60,12 +61,14 @@ class Context:
         background_img.write(data=env_map.astype("float32").tobytes())
         self.context.sampler(texture=background_img).use(4)
 
-    def create_shader(self):
+    def create_shader(self, sample_max=None):
         self.compute_shader = self.context.compute_shader(
             Template(
                 open("assets/glsl/compute_shader.glsl", encoding="utf-8").read()
             ).substitute(
-                width=self.width, height=self.height, sample_max=self.sample_per_frame
+                width=self.width,
+                height=self.height,
+                sample_max=sample_max or self.sample_per_frame,
             )
         )
 
