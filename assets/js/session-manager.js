@@ -93,7 +93,8 @@ class SessionManager {
                   .slice(4)
                   .arrayBuffer()
                   .then((sample) => {
-                    document.getElementById("sample").value = sample.byteLength;
+                    document.getElementById("current-spp").value =
+                      sample.byteLength;
                   });
                 break;
               }
