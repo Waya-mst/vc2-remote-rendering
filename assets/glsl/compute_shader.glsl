@@ -25,12 +25,12 @@ layout(binding = 2, rgba32f) uniform image2D output_image;
 layout(binding = 3, rgba32ui) uniform uimage2D seed_image;
 layout(binding = 4) uniform sampler2D background_image;
 
-ivec3 groupNum = ivec3(
+ivec3 group_num = ivec3(
 	gl_NumWorkGroups.x * gl_WorkGroupSize.x,
 	gl_NumWorkGroups.y * gl_WorkGroupSize.y,
 	gl_NumWorkGroups.z * gl_WorkGroupSize.z
 );
-ivec3 groupIdx = ivec3(
+ivec3 group_idx = ivec3(
 	gl_GlobalInvocationID.x,
 	gl_GlobalInvocationID.y,
 	gl_GlobalInvocationID.z
@@ -213,9 +213,9 @@ vec4 gammaCorrect(const in vec4 color, const in float gamma) {
 }
 
 void main() {
-    xors = imageLoad(seed_image, groupIdx.xy);
+    xors = imageLoad(seed_image, group_idx.xy);
 
-    vec4 color_present = (current_sample == 1) ? vec4(0.0f) : imageLoad(input_image, groupIdx.xy);
+    vec4 color_present = (current_sample == 1) ? vec4(0.0f) : imageLoad(input_image, group_idx.xy);
 
     const vec3 eye = vec3(0.0f, 0.0f, 18.0f);
 
@@ -253,8 +253,8 @@ void main() {
         vec4 color_next = vec4(0.0f);
 
         const vec3 position_screen = {
-            float(groupIdx.x + rand()) / groupNum.x * 16.0f - 8.0f,
-            float(groupIdx.y + rand()) / groupNum.y *  9.0f - 4.5f,
+            float(group_idx.x + rand()) / group_num.x * 16.0f - 8.0f,
+            float(group_idx.y + rand()) / group_num.y *  9.0f - 4.5f,
             eye.z - 9.0f,
         };
 
@@ -296,7 +296,7 @@ void main() {
         color_present += (color_next - color_present) / (current_sample + i);
     }
 
-    imageStore(input_image, groupIdx.xy, color_present);
-    imageStore(output_image, groupIdx.xy, gammaCorrect(toneMap(color_present, 1000.0f), 2.2));
-    imageStore(seed_image, groupIdx.xy, xors);
+    imageStore(input_image, group_idx.xy, color_present);
+    imageStore(output_image, group_idx.xy, gammaCorrect(toneMap(color_present, 1000.0f), 2.2));
+    imageStore(seed_image, group_idx.xy, xors);
 }
