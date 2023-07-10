@@ -17,29 +17,30 @@ class WebSocket:
         # キャンセルされるまでサンプリングとレンダリング結果画像の送信を繰り返す
         i = 0
         while True:
-            await asyncio.sleep(0.01)
             print(["-", "/", "|", "\\"][i % 4], "\r", end="")
             try:
-                self.context.frame = i * self.context.sample_per_frame + 1
+                self.context.current_sample = i * self.context.sample_per_frame + 1
                 i += 1
                 next_frame = i * self.context.sample_per_frame
 
-                if self.context.maxSpp:
-                    if next_frame > int(self.context.maxSpp):
+                if self.context.max_spp:
+                    if next_frame > int(self.context.max_spp):
                         self.context.create_shader(
-                            int(self.context.maxSpp) % self.context.sample_per_frame
+                            int(self.context.max_spp) % self.context.sample_per_frame
                         )
-                        next_frame = int(self.context.maxSpp)
+                        next_frame = int(self.context.max_spp)
 
                 self.context.render()
 
-                # レンダリング結果画像を送信する（識別子：0000）
-                await websocket.send(b"0000" + self.context.get_binary().getvalue())
-                # 現在の1画素あたりのサンプル数を送信する（識別子：0001）
-                await websocket.send(b"0001" + bytes(next_frame))
+                await asyncio.gather(
+                    # レンダリング結果画像を送信する（識別子：0000）
+                    websocket.send(b"0000" + self.context.get_binary().getvalue()),
+                    # 現在の1画素あたりのサンプル数を送信する（識別子：0001）
+                    websocket.send(b"0001" + bytes(next_frame)),
+                )
 
-                if self.context.maxSpp:
-                    if next_frame >= int(self.context.maxSpp):
+                if self.context.max_spp:
+                    if next_frame >= int(self.context.max_spp):
                         break
             except RuntimeError as e:
                 print("Runtime Error:", e)
@@ -61,12 +62,12 @@ class WebSocket:
             if "phi" in message:
                 self.context.phi = message["phi"]
             if "moveX" in message:
-                self.context.moveX = message["moveX"]
+                self.context.move_x = message["moveX"]
             if "moveY" in message:
-                self.context.moveY = message["moveY"]
+                self.context.move_y = message["moveY"]
             if "maxSpp" in message:
                 self.context.create_shader()
-                self.context.maxSpp = message["maxSpp"]
+                self.context.max_spp = message["maxSpp"]
 
             if current_task is not None and not current_task.done():
                 current_task.cancel()
