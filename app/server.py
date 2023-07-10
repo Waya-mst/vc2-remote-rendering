@@ -87,7 +87,9 @@ class WebSocket:
 
 
 if __name__ == "__main__":
-    ctx = Context(width=960, height=540, sample_per_frame=64)
+    ctx = Context(
+        width=960, height=540, local_size_x=8, local_size_y=4, sample_per_frame=64
+    )
     ctx.bind_data(env_map_path="assets/hdr/museum_of_ethnography_1k.hdr")
     ctx.create_shader()
     ws = WebSocket(ctx)

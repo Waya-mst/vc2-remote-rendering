@@ -12,7 +12,7 @@
 #define MIRROR (2)
 #define GLASS (3)
 
-layout(local_size_x = 1, local_size_y = 1) in;
+layout(local_size_x = $local_size_x, local_size_y = $local_size_y) in;
 
 uniform int current_sample;
 uniform float theta;
