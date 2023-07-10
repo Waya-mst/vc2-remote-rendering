@@ -7,11 +7,15 @@ import moderngl
 
 
 class Context:
-    def __init__(self, width=960, height=540, sample_per_frame=1):
+    def __init__(
+        self, width=960, height=540, local_size_x=8, local_size_y=4, sample_per_frame=1
+    ):
         self.context = moderngl.create_context(standalone=True, backend="egl")
 
         self.width = width
         self.height = height
+        self.local_size_x = local_size_x
+        self.local_size_y = local_size_y
         self.sample_per_frame = sample_per_frame
 
         self.current_sample = 1
@@ -68,6 +72,8 @@ class Context:
             ).substitute(
                 width=self.width,
                 height=self.height,
+                local_size_x=self.local_size_x,
+                local_size_y=self.local_size_y,
                 sample_max=sample_max or self.sample_per_frame,
             )
         )
@@ -82,7 +88,10 @@ class Context:
         self.compute_shader["move_x"].value = self.move_x
         self.compute_shader["move_y"].value = self.move_y
 
-        self.compute_shader.run(group_x=self.width, group_y=self.height)
+        self.compute_shader.run(
+            group_x=self.width // self.local_size_x + 1,
+            group_y=self.height // self.local_size_y + 1,
+        )
 
     def get_binary(self):
         if self.output_image is None:
