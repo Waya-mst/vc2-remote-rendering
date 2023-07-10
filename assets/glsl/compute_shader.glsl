@@ -73,7 +73,7 @@ float rand() {
 }
 
 // 球と光線の交点
-bool hit_sphere(const in Sphere sphere, const in Ray ray, inout Hit hit) {
+bool hitSphere(const in Sphere sphere, const in Ray ray, inout Hit hit) {
     vec3 oc = ray.origin - sphere.center;
     float a = dot(ray.direction, ray.direction);
     float b = dot(oc, ray.direction);
@@ -276,7 +276,7 @@ void main() {
 
         while (ray.depth < DEPTH_MAX) {
             for (int i = 0; i < n_sphere; i++) {
-                hit_sphere(spheres[i], ray, hit);
+                hitSphere(spheres[i], ray, hit);
             }
 
             switch (hit.material) {
