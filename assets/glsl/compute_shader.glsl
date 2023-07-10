@@ -36,8 +36,6 @@ ivec3 groupIdx = ivec3(
 	gl_GlobalInvocationID.z
 );
 
-float scale = 1;
-
 struct Ray {
     vec3 origin;    // 光線の始点
     vec3 direction; // 光線の方向ベクトル
@@ -261,7 +259,7 @@ void main() {
         };
 
         Ray ray = {
-            M1 * M2 * (eye + vec3(move_x, move_y, scale - 1)),
+            M1 * M2 * (eye + vec3(move_x, move_y, 0)),
             M1 * M2 * (normalize(position_screen - eye)),
             vec3(1.0f),
             0,
