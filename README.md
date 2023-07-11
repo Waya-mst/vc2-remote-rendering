@@ -77,28 +77,32 @@
 
   アプリケーションの開発に必要な python のパッケージが記述されている．
 
-## Python3 バージョン
-
-```bash
-python3 -V
-Python 3.10.6
-```
-
 ## 仮想環境の構築
 
-構築：
+### Anaconda のインストール
+
+[公式サイト](https://www.anaconda.com/) から環境に応じたインストーラをダウンロードし，インストールする
+
+### 仮想環境の構築
+
 ```bash
-python3 -m venv venv
+conda create --name venv python=3.10.12
 ```
 
-有効化：
+venv は仮想環境の名前で，任意の文字列に変更可能
+
+python version は Google Colaboratory の [Release Notes](https://colab.research.google.com/notebooks/relnotes.ipynb) で書かれているバージョンに合わせる（2023/06/23 時点で 3.10.12）
+
+### 仮想環境の有効化
+
 ```bash
-. venv/bin/activate
+conda activate venv
 ```
 
-無効化：
+### 仮想環境の無効化
+
 ```bash
-deactivate
+conda deactivate
 ```
 
 ## 依存パッケージのインストール
