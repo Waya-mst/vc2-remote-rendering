@@ -150,7 +150,7 @@ class SessionManager {
   save() {
     const aTag = document.createElement("a");
     const dataURL = this.canvas.toDataURL("image/png");
-    const samplePerPixel = document.getElementById("sample").value;
+    const samplePerPixel = document.getElementById("current-spp").value;
     aTag.setAttribute(
       "href",
       dataURL.replace(/^data:image\/png/, "data:application/octet-stream")
