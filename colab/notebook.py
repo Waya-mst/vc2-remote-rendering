@@ -86,6 +86,16 @@ region = region_map.get(timezone.split("/")[0], "us")
 """
 
 fragments[
+    "install_ngrok_authtoken"
+] = """
+# Ngrok authtoken を指定
+# authtoken の値をダッシュボード (https://dashboard.ngrok.com/get-started/your-authtoken) から取得し，フォームに入力する
+# 毎回の入力を省略する場合は，次行の secret を authtoken の値に書き換える
+auth_token = "secret"
+auth_token = not auth_token == "secret" or input("auth_token: ")
+"""
+
+fragments[
     "generate_access_link"
 ] = """
 from pyngrok import conf, ngrok
@@ -125,6 +135,7 @@ notebook["cells"] = [
     new_code_cell("write_render.py"),
     new_code_cell("download_environment_map"),
     new_code_cell("get_server_region"),
+    new_code_cell("install_ngrok_authtoken"),
     new_code_cell("generate_access_link"),
     new_code_cell("start_up_server"),
 ]
