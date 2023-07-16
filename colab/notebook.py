@@ -100,12 +100,11 @@ fragments[
 ] = """
 from pyngrok import conf, ngrok
 
-# ngrok のトンネルのリージョンを指定
-# cf.) https://pyngrok.readthedocs.io/en/latest/index.html#setting-the-region
-conf.get_default().region = region
+# Ngrok のトンネルのリージョンと authtoken を設定
+pyngrok_config = conf.PyngrokConfig(region=region, auth_token=auth_token)
 
 # 433 port へのアクセスを 8030 port へフォワーディング
-public_url = ngrok.connect(8030).public_url
+public_url = ngrok.connect(8030, pyngrok_config=pyngrok_config).public_url
 print(public_url.replace("https", "wss"))
 """
 
