@@ -104,8 +104,8 @@ from pyngrok import conf, ngrok
 pyngrok_config = conf.PyngrokConfig(region=region, auth_token=auth_token)
 
 # 433 port へのアクセスを 8030 port へフォワーディング
-public_url = ngrok.connect(8030, pyngrok_config=pyngrok_config).public_url
-print(public_url.replace("https", "wss"))
+public_url = ngrok.connect(8030, proto="tcp", pyngrok_config=pyngrok_config).public_url
+print(public_url.replace("tcp://", "ws://"))
 """
 
 fragments[
