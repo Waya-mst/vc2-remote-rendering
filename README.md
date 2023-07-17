@@ -18,6 +18,7 @@
 │       └── session-manager.js
 ├── colab
 │   ├── notebook.py
+│   ├── tunnel.py
 │   └── websocket_server.ipynb
 ├── Makefile
 ├── README.md
@@ -56,6 +57,10 @@
 - colab/notebook.py
 
   Google Colaboratory で実行可能なノートブックファイル (.ipynb) を生成するスクリプトが記述されている．
+
+- colab/tunnel.py
+
+  Google Colaboratory で Ngrok のトンネルを使用するためのクラスが記述されている．
 
 - colab/websocket_server.ipynb
 
