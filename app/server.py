@@ -11,9 +11,6 @@ class WebSocket:
         self.context = context
 
     async def task(self, websocket):
-        if asyncio.current_task().cancelled():
-            raise asyncio.CancelledError()
-
         # キャンセルされるまでサンプリングとレンダリング結果画像の送信を繰り返す
         self.context.create_shader()
         i = 0
@@ -69,10 +66,9 @@ class WebSocket:
             if "maxSpp" in message:
                 self.context.max_spp = message["maxSpp"]
 
-            if current_task is not None and not current_task.done():
-                current_task.cancel()
-                print("cancel called")
-                print("current_task: ", current_task)
+            for task in asyncio.all_tasks():
+                if task.get_coro().__name__ == "task" and not task.done():
+                    task.cancel()
 
             # レンダリングタスクを実行する
             current_task = asyncio.create_task(self.task(websocket))
