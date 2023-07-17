@@ -24,7 +24,7 @@ fragments[
     "install_packages"
 ] = """
 !pip install -r requirements.txt
-!pip install pyngrok
+!pip install pyngrok ping3
 """
 
 fragments[
@@ -38,6 +38,7 @@ fragments[
 ] = """
 !mkdir -p app
 !mkdir -p assets/glsl
+!mkdir -p colab
 """
 
 fragments["write_compute_shader.glsl"] = (
@@ -60,7 +61,7 @@ fragments[
 """
 
 fragments[
-    "get_server_region"
+    "describe_instance_information"
 ] = """
 import json
 from pprint import pprint
@@ -68,43 +69,29 @@ from urllib import request
 
 ipinfo = json.loads(request.urlopen("https://ipinfo.io").read())
 pprint(ipinfo)
-
-# タイムゾーンの情報に基づき，サーバーに最も近いリージョンを見つける
-# ngrok で指定できるリージョンは下記のとおり：
-# cf.) https://ngrok.com/docs/ngrok-agent/config/#region
-timezone = ipinfo["timezone"]
-region_map = {
-    "America": "us", # United States
-    "Europe": "eu", # Europe
-    "Pacific": "ap", # Asia/Pacific
-    "Australia": "au", # Australia
-    # "": "sa", # South America
-    "Asia": "jp", # Japan
-    # "": "in", # India
-}
-region = region_map.get(timezone.split("/")[0], "us")
 """
 
+fragments["write_tunnel.py"] = (
+    "%%file colab/tunnel.py\n" + open("colab/tunnel.py", encoding="utf-8").read()
+)
+
 fragments[
-    "install_ngrok_authtoken"
+    "start_tunnel"
 ] = """
+from colab.tunnel import Tunnel
+
+tunnel = Tunnel()
+
 # Ngrok authtoken を指定
 # authtoken の値をダッシュボード (https://dashboard.ngrok.com/get-started/your-authtoken) から取得し，フォームに入力する
-# 毎回の入力を省略する場合は，次行の secret を authtoken の値に書き換える
-auth_token = "secret"
-auth_token = not auth_token == "secret" or input("auth_token: ")
-"""
+# 毎回の入力を省略する場合は，authtoken の値を引数として渡す
+tunnel.install_auth_token()
 
-fragments[
-    "generate_access_link"
-] = """
-from pyngrok import conf, ngrok
+# Google Colaboratory のサーバと最も低遅延で通信できるトンネルを見つける
+tunnel.calc_region_priority()
 
-# Ngrok のトンネルのリージョンと authtoken を設定
-pyngrok_config = conf.PyngrokConfig(region=region, auth_token=auth_token)
-
-# 433 port へのアクセスを 8030 port へフォワーディング
-public_url = ngrok.connect(8030, proto="tcp", pyngrok_config=pyngrok_config).public_url
+# グローバルアクセス可能なURLを取得する
+public_url = tunnel.get_public_url(port=8030)
 print(public_url.replace("tcp://", "ws://"))
 """
 
@@ -133,9 +120,9 @@ notebook["cells"] = [
     new_code_cell("write_server.py"),
     new_code_cell("write_render.py"),
     new_code_cell("download_environment_map"),
-    new_code_cell("get_server_region"),
-    new_code_cell("install_ngrok_authtoken"),
-    new_code_cell("generate_access_link"),
+    new_code_cell("describe_instance_information"),
+    new_code_cell("write_tunnel.py"),
+    new_code_cell("start_tunnel"),
     new_code_cell("start_up_server"),
 ]
 
