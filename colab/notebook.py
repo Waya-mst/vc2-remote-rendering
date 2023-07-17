@@ -86,17 +86,26 @@ region = region_map.get(timezone.split("/")[0], "us")
 """
 
 fragments[
+    "install_ngrok_authtoken"
+] = """
+# Ngrok authtoken を指定
+# authtoken の値をダッシュボード (https://dashboard.ngrok.com/get-started/your-authtoken) から取得し，フォームに入力する
+# 毎回の入力を省略する場合は，次行の secret を authtoken の値に書き換える
+auth_token = "secret"
+auth_token = not auth_token == "secret" or input("auth_token: ")
+"""
+
+fragments[
     "generate_access_link"
 ] = """
 from pyngrok import conf, ngrok
 
-# ngrok のトンネルのリージョンを指定
-# cf.) https://pyngrok.readthedocs.io/en/latest/index.html#setting-the-region
-conf.get_default().region = region
+# Ngrok のトンネルのリージョンと authtoken を設定
+pyngrok_config = conf.PyngrokConfig(region=region, auth_token=auth_token)
 
 # 433 port へのアクセスを 8030 port へフォワーディング
-public_url = ngrok.connect(8030).public_url
-print(public_url.replace("https", "wss"))
+public_url = ngrok.connect(8030, proto="tcp", pyngrok_config=pyngrok_config).public_url
+print(public_url.replace("tcp://", "ws://"))
 """
 
 fragments[
@@ -125,6 +134,7 @@ notebook["cells"] = [
     new_code_cell("write_render.py"),
     new_code_cell("download_environment_map"),
     new_code_cell("get_server_region"),
+    new_code_cell("install_ngrok_authtoken"),
     new_code_cell("generate_access_link"),
     new_code_cell("start_up_server"),
 ]
