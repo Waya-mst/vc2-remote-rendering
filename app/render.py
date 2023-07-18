@@ -46,11 +46,13 @@ class Context:
 
         # 乱数のシード画像（各画素で別々のシード値を使用）
         seed_image = self.context.texture(
-            (self.width, self.height), 4, data, dtype="f4"
+            (self.width, self.height), 4, data, dtype="u4"
         )
         seed_image.write(
-            data=np.random.random_sample((self.width, self.height, 4))
-            .astype("float32")
+            data=np.random.default_rng()
+            .integers(
+                low=0, high=2**32, size=(self.width, self.height, 4), dtype=np.uint32
+            )
             .tobytes()
         )
         seed_image.bind_to_image(3)
