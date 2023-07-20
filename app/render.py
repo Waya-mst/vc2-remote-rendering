@@ -13,6 +13,7 @@ class Context:
     ):
         kwargs = {
             "standalone": True,
+            "require": 430,
         }
         if platform.system() == "Linux":
             kwargs["backend"] = "egl"
