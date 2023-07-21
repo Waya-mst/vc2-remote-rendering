@@ -1,4 +1,5 @@
 import io
+import platform
 from string import Template
 
 import cv2
@@ -10,7 +11,13 @@ class Context:
     def __init__(
         self, width=960, height=540, local_size_x=8, local_size_y=4, sample_per_frame=1
     ):
-        self.context = moderngl.create_context(standalone=True, backend="egl")
+        kwargs = {
+            "standalone": True,
+            "require": 430,
+        }
+        if platform.system() == "Linux":
+            kwargs["backend"] = "egl"
+        self.context = moderngl.create_context(**kwargs)
 
         self.width = width
         self.height = height
