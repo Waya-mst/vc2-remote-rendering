@@ -84,9 +84,9 @@
 
 ## 仮想環境の構築
 
-### Anaconda のインストール
+### Miniconda のインストール
 
-[公式サイト](https://www.anaconda.com/) から環境に応じたインストーラをダウンロードし，インストールする
+[公式サイト](https://docs.conda.io/en/latest/miniconda.html) から環境に応じたインストーラをダウンロードし，インストールする
 
 ### 仮想環境の構築
 
