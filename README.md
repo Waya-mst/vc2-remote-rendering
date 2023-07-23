@@ -129,9 +129,16 @@ pip install -r requirements_dev.txt
 
 ## 環境マップのダウンロード
 
+Linux (bash)
 ```bash
 (mkdir -p assets/hdr && cd assets/hdr && curl -O https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/museum_of_ethnography_1k.hdr)
 ```
+
+Windows (powershell)
+```powershell
+(New-Item -Itemtype Directory -Force assets/hdr | Out-Null && Push-Location assets/hdr &&  curl -O https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/museum_of_ethnography_1k.hdr && Pop-Location)
+```
+
 
 ## サーバの起動
 
