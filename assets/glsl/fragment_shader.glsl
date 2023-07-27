@@ -37,7 +37,7 @@ struct Ray {
     vec3 origin;    // 光線の始点
     vec3 direction; // 光線の方向ベクトル
     vec3 scatter;   // 散乱成分
-    uint depth;     // 反射した回数
+    int depth;     // 反射した回数
 };
 
 struct Hit {
@@ -46,7 +46,7 @@ struct Hit {
     vec3 normal;    // 衝突位置における法線ベクトル
     vec3 scatter;   // 散乱成分
     vec3 emission;  // 放出成分
-    uint material;  // 材質
+    int material;  // 材質
 };
 
 struct Sphere {
@@ -54,7 +54,7 @@ struct Sphere {
     float radius;   // 球の半径
     vec3 scatter;   // 散乱成分
     vec3 emission;  // 放出成分
-    uint material;  // 材質
+    int material;  // 材質
 };
 
 uvec4 xors;
@@ -216,7 +216,7 @@ void main() {
 
     const vec3 eye = vec3(0.0f, 0.0f, 18.0f);
 
-    const uint n_sphere = 2;
+    const int n_sphere = 2;
     const Sphere spheres[n_sphere] = {
         {
             vec3(0.0f),
