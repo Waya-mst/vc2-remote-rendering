@@ -20,3 +20,6 @@ notebook:
 
 notebook-check:
 	python colab/notebook.py | diff colab/websocket_server.ipynb -
+
+one-by-one-push:
+	python one_by_one_push.py

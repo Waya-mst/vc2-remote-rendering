@@ -174,3 +174,7 @@ Google Colaboratory に生成されたファイルをアップロードすれば
 Format: `make black`
 
 Lint: `make pyflakes`
+
+## （開発者向け）one-by-one push
+
+`make one-by-one-push`
