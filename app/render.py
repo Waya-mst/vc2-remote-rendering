@@ -35,6 +35,9 @@ class Context:
         self.output_image = None
 
         self.compute_shader = None
+        self.program = None
+        self.vao = None
+        self.fbo = None
 
     def bind_data(self, env_map_path):
         data = np.zeros((self.height, self.width, 4)).astype("float32").tobytes()
@@ -74,6 +77,37 @@ class Context:
         background_img.write(data=env_map.astype("float32").tobytes())
         self.context.sampler(texture=background_img).use(4)
 
+    def create_program(self, sample_max=None):
+        self.program = self.context.program(
+            vertex_shader=open(
+                "assets/glsl/vertex_shader.glsl", encoding="utf-8"
+            ).read(),
+            fragment_shader=Template(
+                open("assets/glsl/fragment_shader.glsl", encoding="utf-8").read()
+            ).substitute(
+                width=self.width,
+                height=self.height,
+                sample_max=sample_max or self.sample_per_frame,
+            ),
+        )
+        vbo = self.context.buffer(
+            np.array(
+                [
+                    [0, 0],
+                    [0, 1],
+                    [1, 0],
+                    [1, 1],
+                ],
+                dtype="f4",
+            )
+        )
+        self.vao = self.context.simple_vertex_array(
+            self.program, vbo, "position_vertices"
+        )
+        self.fbo = self.context.simple_framebuffer(
+            (self.width, self.height), components=4, dtype="f4"
+        )
+
     def create_shader(self, sample_max=None):
         self.compute_shader = self.context.compute_shader(
             Template(
@@ -88,27 +122,32 @@ class Context:
         )
 
     def render(self):
-        if self.compute_shader is None:
-            raise RuntimeError("compute_shader has not been assigned")
+        if self.program is None:
+            raise RuntimeError("program has not been created")
+        if self.vao is None:
+            raise RuntimeError("vertex array object has not been assigned")
+        if self.fbo is None:
+            raise RuntimeError("frame buffer object has not been assigned")
 
-        self.compute_shader["current_sample"].value = self.current_sample
-        self.compute_shader["theta"].value = self.theta
-        self.compute_shader["phi"].value = self.phi
-        self.compute_shader["move_x"].value = self.move_x
-        self.compute_shader["move_y"].value = self.move_y
+        self.program["current_sample"].value = self.current_sample
+        self.program["theta"].value = self.theta
+        self.program["phi"].value = self.phi
+        self.program["move_x"].value = self.move_x
+        self.program["move_y"].value = self.move_y
 
-        self.compute_shader.run(
-            group_x=self.width // self.local_size_x + 1,
-            group_y=self.height // self.local_size_y + 1,
-        )
+        self.fbo.use()
+        self.context.clear()
+        self.vao.render(moderngl.TRIANGLE_STRIP)
 
     def get_binary(self):
         if self.output_image is None:
             raise RuntimeError("output_image has not been assigned")
+        if self.fbo is None:
+            raise RuntimeError("frame buffer object has not been assigned")
 
-        buffer = np.frombuffer(self.output_image.read(), dtype="float32").reshape(
-            self.height, self.width, 4
-        )
+        buffer = np.frombuffer(
+            self.fbo.read(components=4, dtype="f4"), dtype="f4"
+        ).reshape(self.height, self.width, 4)
         buffer = np.flipud(buffer)
         buffer = cv2.cvtColor(buffer, cv2.COLOR_BGRA2RGBA)
         buffer = (buffer * 255).astype(np.uint8)

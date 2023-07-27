@@ -12,7 +12,7 @@ class WebSocket:
 
     async def task(self, websocket):
         # キャンセルされるまでサンプリングとレンダリング結果画像の送信を繰り返す
-        self.context.create_shader()
+        self.context.create_program()
         i = 0
         while True:
             print(["-", "/", "|", "\\"][i % 4], "\r", end="")
@@ -23,7 +23,7 @@ class WebSocket:
 
                 if self.context.max_spp:
                     if next_frame > int(self.context.max_spp):
-                        self.context.create_shader(
+                        self.context.create_program(
                             int(self.context.max_spp) % self.context.sample_per_frame
                         )
                         next_frame = int(self.context.max_spp)
