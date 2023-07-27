@@ -23,6 +23,9 @@ black-check:
 clang-format:
 	clang-format -i ${GLSL_FILES}
 
+clang-format-check:
+	clang-format -dry-run -Werror ${GLSL_FILES}
+
 pyflakes:
 	pyflakes ${PYTHON_FILES}
 
