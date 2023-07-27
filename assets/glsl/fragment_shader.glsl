@@ -16,8 +16,8 @@ in vec2 position_screen;
 out vec4 output_color;
 
 layout(binding = 1, rgba32f) uniform image2D input_image;
-layout(binding = 3, rgba32ui) uniform uimage2D seed_image;
-layout(binding = 4) uniform sampler2D background_image;
+layout(binding = 2, rgba32ui) uniform uimage2D seed_image;
+layout(binding = 3) uniform sampler2D background_image;
 
 uniform int current_sample;
 uniform float theta;

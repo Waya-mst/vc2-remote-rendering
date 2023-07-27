@@ -52,7 +52,7 @@ class Context:
             )
             .tobytes()
         )
-        seed_image.bind_to_image(3)
+        seed_image.bind_to_image(2)
 
         # 環境マップ画像
         env_map = cv2.imread(env_map_path, cv2.IMREAD_UNCHANGED)
@@ -62,7 +62,7 @@ class Context:
             (env_map.shape[0], env_map.shape[1]), 4, env_map, dtype="f4"
         )
         background_img.write(data=env_map.astype("float32").tobytes())
-        self.context.sampler(texture=background_img).use(4)
+        self.context.sampler(texture=background_img).use(3)
 
     def create_program(self, sample_max=None):
         self.program = self.context.program(
