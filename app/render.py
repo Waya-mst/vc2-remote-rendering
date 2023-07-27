@@ -95,19 +95,6 @@ class Context:
             (self.width, self.height), components=4, dtype="f4"
         )
 
-    def create_shader(self, sample_max=None):
-        self.compute_shader = self.context.compute_shader(
-            Template(
-                open("assets/glsl/compute_shader.glsl", encoding="utf-8").read()
-            ).substitute(
-                width=self.width,
-                height=self.height,
-                local_size_x=self.local_size_x,
-                local_size_y=self.local_size_y,
-                sample_max=sample_max or self.sample_per_frame,
-            )
-        )
-
     def render(self):
         if self.program is None:
             raise RuntimeError("program has not been created")

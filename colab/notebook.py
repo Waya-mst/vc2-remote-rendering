@@ -41,11 +41,6 @@ fragments[
 !mkdir -p colab
 """
 
-fragments["write_compute_shader.glsl"] = (
-    "%%file assets/glsl/compute_shader.glsl\n"
-    + open("assets/glsl/compute_shader.glsl", encoding="utf-8").read()
-)
-
 fragments["write_vertex_shader.glsl"] = (
     "%%file assets/glsl/vertex_shader.glsl\n"
     + open("assets/glsl/vertex_shader.glsl", encoding="utf-8").read()
@@ -126,7 +121,6 @@ notebook["cells"] = [
     new_code_cell("install_packages"),
     new_code_cell("show_moderngl_config"),
     new_code_cell("make_directories"),
-    new_code_cell("write_compute_shader.glsl"),
     new_code_cell("write_vertex_shader.glsl"),
     new_code_cell("write_fragment_shader.glsl"),
     new_code_cell("write_server.py"),
