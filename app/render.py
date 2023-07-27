@@ -8,9 +8,7 @@ import moderngl
 
 
 class Context:
-    def __init__(
-        self, width=960, height=540, local_size_x=8, local_size_y=4, sample_per_frame=1
-    ):
+    def __init__(self, width=960, height=540, sample_per_frame=1):
         kwargs = {
             "standalone": True,
             "require": 430,
@@ -21,8 +19,6 @@ class Context:
 
         self.width = width
         self.height = height
-        self.local_size_x = local_size_x
-        self.local_size_y = local_size_y
         self.sample_per_frame = sample_per_frame
 
         self.current_sample = 1
@@ -32,9 +28,6 @@ class Context:
         self.move_y = 0
         self.max_spp = 0
 
-        self.output_image = None
-
-        self.compute_shader = None
         self.program = None
         self.vao = None
         self.fbo = None
@@ -47,12 +40,6 @@ class Context:
             (self.width, self.height), 4, data, dtype="f4"
         )
         input_image.bind_to_image(1)
-
-        # 送信用画像（トーンマップおよびガンマ変換適用済み）
-        self.output_image = self.context.texture(
-            (self.width, self.height), 4, data, dtype="f4"
-        )
-        self.output_image.bind_to_image(2)
 
         # 乱数のシード画像（各画素で別々のシード値を使用）
         seed_image = self.context.texture(
@@ -140,8 +127,6 @@ class Context:
         self.vao.render(moderngl.TRIANGLE_STRIP)
 
     def get_binary(self):
-        if self.output_image is None:
-            raise RuntimeError("output_image has not been assigned")
         if self.fbo is None:
             raise RuntimeError("frame buffer object has not been assigned")
 

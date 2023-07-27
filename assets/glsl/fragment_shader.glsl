@@ -16,7 +16,6 @@ in vec2 position_screen;
 out vec4 output_color;
 
 layout(binding = 1, rgba32f) uniform image2D input_image;
-layout(binding = 2, rgba32f) uniform image2D output_image;
 layout(binding = 3, rgba32ui) uniform uimage2D seed_image;
 layout(binding = 4) uniform sampler2D background_image;
 
@@ -295,7 +294,6 @@ void main() {
     }
 
     imageStore(input_image, group_idx.xy, color_present);
-    imageStore(output_image, group_idx.xy, gammaCorrect(toneMap(color_present, 1000.0f), 2.2));
     imageStore(seed_image, group_idx.xy, xors);
 
     output_color = gammaCorrect(toneMap(color_present, 1000.0f), 2.2);
