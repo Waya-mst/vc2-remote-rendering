@@ -114,7 +114,7 @@ void mirror(inout Ray ray, const in Hit hit) {
 }
 
 float fresnel(const in float n, const in float u) {
-  const float f0 = POW2((n - 1) / (n + 1));
+  float f0 = POW2((n - 1) / (n + 1));
   return f0 + (1 - f0) * POW5(1 - u);
 }
 
@@ -202,47 +202,28 @@ void main() {
   const vec3 eye = vec3(0.0f, 0.0f, 18.0f);
 
   const int n_sphere = 2;
-  const Sphere spheres[n_sphere] = {
-      {
-          vec3(0.0f),
-          4.0f,
-          vec3(0.75f),
-          vec3(0),
-          DIFFUSE,
-      },
-      {
-          vec3(0.0f, -10000.05f, 0.0f),
-          9996.0f,
-          vec3(0.75f),
-          vec3(0),
-          DIFFUSE,
-      },
-  };
+  const Sphere spheres[n_sphere] =
+      Sphere[n_sphere](Sphere(vec3(0.0f), 4.0f, vec3(0.75f), vec3(0), DIFFUSE),
+                       Sphere(vec3(0.0f, -10000.05f, 0.0f), 9996.0f,
+                              vec3(0.75f), vec3(0), DIFFUSE));
 
-  const mat3 M1 =
+  mat3 M1 =
       mat3(cos(theta), 0, sin(theta), 0, 1, 0, -sin(theta), 0, cos(theta));
 
-  const mat3 M2 = mat3(1, 0, 0, 0, cos(phi), -sin(phi), 0, sin(phi), cos(phi));
+  mat3 M2 = mat3(1, 0, 0, 0, cos(phi), -sin(phi), 0, sin(phi), cos(phi));
 
   for (int i = 0; i < SAMPLE_MAX; i++) {
     vec4 color_next = vec4(0.0f);
 
-    const vec3 position_screen = {
+    vec3 position_screen = vec3(
         float(group_idx.x + rand()) / group_num.x * 16.0f - 8.0f,
-        float(group_idx.y + rand()) / group_num.y * 9.0f - 4.5f,
-        eye.z - 9.0f,
-    };
+        float(group_idx.y + rand()) / group_num.y * 9.0f - 4.5f, eye.z - 9.0f);
 
-    Ray ray = {
-        M1 * M2 * (eye + vec3(move_x, move_y, 0)),
-        M1 * M2 * (normalize(position_screen - eye)),
-        vec3(1.0f),
-        0,
-    };
+    Ray ray = Ray(M1 * M2 * (eye + vec3(move_x, move_y, 0)),
+                  M1 * M2 * (normalize(position_screen - eye)), vec3(1.0f), 0);
 
-    Hit hit = {
-        1000.0f, vec3(0.0f), vec3(0.0f), vec3(0.0f), vec3(0.0f), BACKGROUND,
-    };
+    Hit hit = Hit(1000.0f, vec3(0.0f), vec3(0.0f), vec3(0.0f), vec3(0.0f),
+                  BACKGROUND);
 
     while (ray.depth < DEPTH_MAX) {
       for (int i = 0; i < n_sphere; i++) {
