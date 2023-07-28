@@ -63,11 +63,11 @@ class Context:
         env_map = cv2.imread(env_map_path, cv2.IMREAD_UNCHANGED)
         env_map = cv2.cvtColor(env_map, cv2.COLOR_BGRA2RGBA)
         env_map = env_map.reshape((env_map.shape[1], env_map.shape[0], 4))
-        background_img = self.context.texture(
+        background_image = self.context.texture(
             (env_map.shape[0], env_map.shape[1]), 4, env_map, dtype="f4"
         )
-        background_img.write(data=env_map.astype("float32").tobytes())
-        self.context.sampler(texture=background_img).use(3)
+        background_image.write(data=env_map.astype("float32").tobytes())
+        self.context.sampler(texture=background_image).use(3)
 
     def create_program(self, sample_max=None):
         self.program = self.context.program(
