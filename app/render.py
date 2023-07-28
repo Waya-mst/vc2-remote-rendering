@@ -11,7 +11,7 @@ class Context:
     def __init__(self, width=960, height=540, sample_per_frame=1):
         kwargs = {
             "standalone": True,
-            "require": 430,
+            "require": 330,
         }
         if platform.system() == "Linux":
             kwargs["backend"] = "egl"

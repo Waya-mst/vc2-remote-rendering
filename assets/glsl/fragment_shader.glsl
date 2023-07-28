@@ -1,4 +1,4 @@
-#version 430 core
+#version 330 core
 
 #define POW2(X) ((X) * (X))
 #define POW5(X) ((X) * (X) * (X) * (X) * (X))
