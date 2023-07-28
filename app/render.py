@@ -113,6 +113,10 @@ class Context:
         self.program["move_x"].value = self.move_x
         self.program["move_y"].value = self.move_y
 
+        self.program["input_image"].value = 1
+        self.program["seed_image"].value = 2
+        self.program["background_image"].value = 3
+
         self.fbo = self.context.framebuffer(
             [
                 self.context.texture(

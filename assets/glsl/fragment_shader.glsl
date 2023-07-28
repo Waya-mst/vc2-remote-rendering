@@ -16,9 +16,9 @@ out vec4 output_color;
 out vec4 input_color;
 out uvec4 seed_value;
 
-layout(binding = 1) uniform sampler2D input_image;
-layout(binding = 2) uniform usampler2D seed_image;
-layout(binding = 3) uniform sampler2D background_image;
+uniform sampler2D input_image;
+uniform usampler2D seed_image;
+uniform sampler2D background_image;
 
 uniform int current_sample;
 uniform float theta;
