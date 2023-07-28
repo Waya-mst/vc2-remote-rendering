@@ -28,6 +28,10 @@ class Context:
         self.move_y = 0
         self.max_spp = 0
 
+        self.switch = 0
+        self.input_image_list = None
+        self.seed_image_list = None
+
         self.program = None
         self.vao = None
         self.fbo = None
@@ -36,23 +40,24 @@ class Context:
         data = np.zeros((self.height, self.width, 4)).astype("float32").tobytes()
 
         # サンプリングを再開するために用いる raw 画像
-        input_image = self.context.texture(
-            (self.width, self.height), 4, data, dtype="f4"
-        )
-        input_image.bind_to_image(1)
+        self.input_image_list = [
+            self.context.texture((self.width, self.height), 4, data, dtype="f4"),
+            self.context.texture((self.width, self.height), 4, data, dtype="f4"),
+        ]
 
-        # 乱数のシード画像（各画素で別々のシード値を使用）
-        seed_image = self.context.texture(
-            (self.width, self.height), 4, data, dtype="u4"
-        )
-        seed_image.write(
-            data=np.random.default_rng()
+        seed = (
+            np.random.default_rng()
             .integers(
                 low=0, high=2**32, size=(self.width, self.height, 4), dtype=np.uint32
             )
             .tobytes()
         )
-        seed_image.bind_to_image(2)
+
+        # 乱数のシード画像（各画素で別々のシード値を使用）
+        self.seed_image_list = [
+            self.context.texture((self.width, self.height), 4, seed, dtype="f4"),
+            self.context.texture((self.width, self.height), 4, seed, dtype="f4"),
+        ]
 
         # 環境マップ画像
         env_map = cv2.imread(env_map_path, cv2.IMREAD_UNCHANGED)
@@ -91,17 +96,16 @@ class Context:
         self.vao = self.context.simple_vertex_array(
             self.program, vbo, "position_vertices"
         )
-        self.fbo = self.context.simple_framebuffer(
-            (self.width, self.height), components=4, dtype="f4"
-        )
 
     def render(self):
         if self.program is None:
             raise RuntimeError("program has not been created")
         if self.vao is None:
             raise RuntimeError("vertex array object has not been assigned")
-        if self.fbo is None:
-            raise RuntimeError("frame buffer object has not been assigned")
+        if self.input_image_list is None:
+            raise RuntimeError("input_image_list has not been assigned")
+        if self.seed_image_list is None:
+            raise RuntimeError("seed_image_list has not been assigned")
 
         self.program["current_sample"].value = self.current_sample
         self.program["theta"].value = self.theta
@@ -109,7 +113,19 @@ class Context:
         self.program["move_x"].value = self.move_x
         self.program["move_y"].value = self.move_y
 
+        self.fbo = self.context.framebuffer(
+            [
+                self.context.texture(
+                    (self.width, self.height), components=4, dtype="f4"
+                ),
+                self.input_image_list[self.switch],
+                self.seed_image_list[self.switch],
+            ]
+        )
         self.fbo.use()
+        self.switch = ~self.switch & 1
+        self.context.sampler(texture=self.input_image_list[self.switch]).use(1)
+        self.context.sampler(texture=self.seed_image_list[self.switch]).use(2)
         self.context.clear()
         self.vao.render(moderngl.TRIANGLE_STRIP)
 

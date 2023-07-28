@@ -12,10 +12,12 @@
 #define MIRROR (2)
 #define GLASS (3)
 
-out vec4 output_scolor;
+out vec4 output_color;
+out vec4 input_color;
+out uvec4 seed_value;
 
-layout(binding = 1, rgba32f) uniform image2D input_image;
-layout(binding = 2, rgba32ui) uniform uimage2D seed_image;
+layout(binding = 1) uniform sampler2D input_image;
+layout(binding = 2) uniform usampler2D seed_image;
 layout(binding = 3) uniform sampler2D background_image;
 
 uniform int current_sample;
@@ -190,10 +192,12 @@ vec4 gammaCorrect(const in vec4 color, const in float gamma) {
 }
 
 void main() {
-  xors = imageLoad(seed_image, group_idx.xy);
+  xors = texture(seed_image, gl_FragCoord.xy / group_num.xy);
 
   vec4 color_present =
-      (current_sample == 1) ? vec4(0.0f) : imageLoad(input_image, group_idx.xy);
+      (current_sample == 1)
+          ? vec4(0.0f)
+          : texture(input_image, gl_FragCoord.xy / group_num.xy);
 
   const vec3 eye = vec3(0.0f, 0.0f, 18.0f);
 
@@ -270,8 +274,7 @@ void main() {
     color_present += (color_next - color_present) / (current_sample + i);
   }
 
-  imageStore(input_image, group_idx.xy, color_present);
-  imageStore(seed_image, group_idx.xy, xors);
-
   output_color = gammaCorrect(toneMap(color_present, 1000.0f), 2.2);
+  input_color = color_present;
+  seed_value = xors;
 }
