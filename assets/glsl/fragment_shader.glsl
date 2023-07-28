@@ -12,8 +12,7 @@
 #define MIRROR (2)
 #define GLASS (3)
 
-in vec2 position_screen;
-out vec4 output_color;
+out vec4 output_scolor;
 
 layout(binding = 1, rgba32f) uniform image2D input_image;
 layout(binding = 2, rgba32ui) uniform uimage2D seed_image;
