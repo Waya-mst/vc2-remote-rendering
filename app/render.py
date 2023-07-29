@@ -81,6 +81,11 @@ class Context:
                 height=self.height,
                 sample_max=sample_max or self.sample_per_frame,
             ),
+            fragment_outputs={
+                "output_color": 0,
+                "input_color": 1,
+                "seed_value": 2,
+            },
         )
         vbo = self.context.buffer(
             np.array(
