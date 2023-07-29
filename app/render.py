@@ -8,6 +8,13 @@ import moderngl
 
 
 class Context:
+    ATTACHMENT_INDEX_OUTPUT_COLOR = 0
+    ATTACHMENT_INDEX_INPUT_COLOR = 1
+    ATTACHMENT_INDEX_SEED_VALUE = 2
+    TEXTURE_UNIT_INPUT_IMAGE = 1
+    TEXTURE_UNIT_SEED_IMAGE = 2
+    TEXTURE_UNIT_BACKGROUND_IMAGE = 3
+
     def __init__(self, width=960, height=540, sample_per_frame=1):
         kwargs = {
             "standalone": True,
@@ -67,7 +74,9 @@ class Context:
             (env_map.shape[0], env_map.shape[1]), 4, env_map, dtype="f4"
         )
         background_image.write(data=env_map.astype("float32").tobytes())
-        self.context.sampler(texture=background_image).use(3)
+        self.context.sampler(texture=background_image).use(
+            Context.TEXTURE_UNIT_BACKGROUND_IMAGE
+        )
 
     def create_program(self, sample_max=None):
         self.program = self.context.program(
@@ -82,9 +91,9 @@ class Context:
                 sample_max=sample_max or self.sample_per_frame,
             ),
             fragment_outputs={
-                "output_color": 0,
-                "input_color": 1,
-                "seed_value": 2,
+                "output_color": Context.ATTACHMENT_INDEX_OUTPUT_COLOR,
+                "input_color": Context.ATTACHMENT_INDEX_INPUT_COLOR,
+                "seed_value": Context.ATTACHMENT_INDEX_SEED_VALUE,
             },
         )
         vbo = self.context.buffer(
@@ -118,9 +127,9 @@ class Context:
         self.program["move_x"].value = self.move_x
         self.program["move_y"].value = self.move_y
 
-        self.program["input_image"].value = 1
-        self.program["seed_image"].value = 2
-        self.program["background_image"].value = 3
+        self.program["input_image"].value = Context.TEXTURE_UNIT_INPUT_IMAGE
+        self.program["seed_image"].value = Context.TEXTURE_UNIT_SEED_IMAGE
+        self.program["background_image"].value = Context.TEXTURE_UNIT_BACKGROUND_IMAGE
 
         self.fbo = self.context.framebuffer(
             [
@@ -133,8 +142,12 @@ class Context:
         )
         self.fbo.use()
         self.switch = ~self.switch & 1
-        self.context.sampler(texture=self.input_image_list[self.switch]).use(1)
-        self.context.sampler(texture=self.seed_image_list[self.switch]).use(2)
+        self.context.sampler(texture=self.input_image_list[self.switch]).use(
+            Context.ATTACHMENT_INDEX_INPUT_COLOR
+        )
+        self.context.sampler(texture=self.seed_image_list[self.switch]).use(
+            Context.ATTACHMENT_INDEX_SEED_VALUE
+        )
         self.context.clear()
         self.vao.render(moderngl.TRIANGLE_STRIP)
 
