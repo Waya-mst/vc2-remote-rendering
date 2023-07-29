@@ -12,7 +12,7 @@ class WebSocket:
 
     async def task(self, websocket):
         # キャンセルされるまでサンプリングとレンダリング結果画像の送信を繰り返す
-        self.context.create_shader()
+        self.context.create_program()
         i = 0
         while True:
             print(["-", "/", "|", "\\"][i % 4], "\r", end="")
@@ -23,7 +23,7 @@ class WebSocket:
 
                 if self.context.max_spp:
                     if next_frame > int(self.context.max_spp):
-                        self.context.create_shader(
+                        self.context.create_program(
                             int(self.context.max_spp) % self.context.sample_per_frame
                         )
                         next_frame = int(self.context.max_spp)
@@ -83,9 +83,7 @@ class WebSocket:
 
 
 if __name__ == "__main__":
-    ctx = Context(
-        width=960, height=540, local_size_x=8, local_size_y=4, sample_per_frame=64
-    )
+    ctx = Context(width=960, height=540, sample_per_frame=64)
     ctx.bind_data(env_map_path="assets/hdr/museum_of_ethnography_1k.hdr")
     ws = WebSocket(ctx)
     asyncio.run(ws.main("127.0.0.1", 8030))

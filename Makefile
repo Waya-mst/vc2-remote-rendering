@@ -6,11 +6,25 @@ PYTHON_FILES=$(shell \
 	-exec echo -n {}" " \; \
 )
 
+GLSL_FILES=$(shell \
+	find . \
+	-path "./.ignore" -prune -o \
+	-path "./venv" -prune -o \
+	-type f -name "*.glsl" \
+	-exec echo -n {}" " \; \
+)
+
 black:
 	black ${PYTHON_FILES}
 
 black-check:
 	black --check ${PYTHON_FILES}
+
+clang-format:
+	clang-format -i ${GLSL_FILES}
+
+clang-format-check:
+	clang-format -dry-run -Werror ${GLSL_FILES}
 
 pyflakes:
 	pyflakes ${PYTHON_FILES}
