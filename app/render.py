@@ -156,7 +156,12 @@ class Context:
             raise RuntimeError("frame buffer object has not been assigned")
 
         buffer = np.frombuffer(
-            self.fbo.read(components=4, dtype="f4"), dtype="f4"
+            self.fbo.read(
+                components=4,
+                dtype="f4",
+                attachment=Context.ATTACHMENT_INDEX_OUTPUT_COLOR,
+            ),
+            dtype="f4",
         ).reshape(self.height, self.width, 4)
         buffer = np.flipud(buffer)
         buffer = cv2.cvtColor(buffer, cv2.COLOR_BGRA2RGBA)
