@@ -9,7 +9,8 @@
 │   └── server.py
 ├── assets
 │   ├── glsl
-│   │   └── compute_shader.glsl
+│   │   ├── fragment_shader.glsl
+│   │   └── vertex_shader.glsl
 │   ├── hdr
 │   │   └── museum_of_ethnography_1k.hdr
 │   ├── html
@@ -21,11 +22,12 @@
 │   ├── tunnel.py
 │   └── websocket_server.ipynb
 ├── Makefile
+├── one_by_one_push.py
 ├── README.md
 ├── requirements_dev.txt
 └── requirements.txt
 
-7 directories, 12 files
+7 directories, 15 files
 ```
 
 各ファイルの内容を以下に示す：
@@ -38,9 +40,13 @@
 
   WebSocket サーバを起動する．クライアントからのリクエストに応じて WebSocket のコネクションを確立し，タスクが生成される．このタスクは，キャンセルのリクエストがくるまで停止しない無限ループとなっており，ループ中にレンダリングとその結果画像の送信が実行される．このループ中のレンダリングにおいて，サンプリングは継続される．WebSocket のコネクション確立後，クライアントから何らかのリクエストがあると，タスクをキャンセルして新しいタスクを生成する．新しいタスクが生成された時点で，サンプリング進捗は０に戻る．
 
-- assets/glsl/compute_shader.glsl
+- assets/glsl/fragment_shader.glsl
 
-  OpenGL のコンピュートシェーダーの内容が記述されている．GPU パストレーシングが実装されている．
+  OpenGL のフラグメントシェーダーの内容が記述されている．GPU パストレーシングが実装されている．
+
+- assets/glsl/vertex_shader.glsl
+
+  OpenGL のバーテックスシェーダーの内容が記述されている．
 
 - assets/hdr/
 
@@ -70,6 +76,10 @@
 
   Python ファイルのフォーマットおよびリントを実行する際のターゲットが記述されている．
 
+- one_by_one_push.py
+
+  `git push` を1コミット毎に実行するスクリプトが記述されている．
+
 - README.md
 
   本ファイル．
@@ -96,7 +106,7 @@ conda create --name venv python=3.10.12
 
 venv は仮想環境の名前で，任意の文字列に変更可能
 
-python version は Google Colaboratory の [Release Notes](https://colab.research.google.com/notebooks/relnotes.ipynb) で書かれているバージョンに合わせる（2023/06/23 時点で 3.10.12）
+python version は Google Colaboratory の [Release Notes](https://colab.research.google.com/notebooks/relnotes.ipynb) で書かれているバージョンに合わせる（2023/07/21 時点で 3.10.12）
 
 ### 仮想環境の有効化
 
@@ -158,7 +168,9 @@ python app/server.py
 - 右ボタンでドラッグするとカメラ移動
 
 
-## （開発者向け）Google Colaboratory 用の notebook を生成する
+## 開発者向け情報
+
+### Google Colaboratory 用の notebook を生成する
 
 仮想環境を有効化し，依存パッケージもインストールした状態で以下のコマンドを実行：
 ```bash
@@ -169,16 +181,16 @@ make notebook
 
 Google Colaboratory に生成されたファイルをアップロードすれば実行できる．
 
-## （開発者向け）Python ファイルの Format & Lint
+### Python ファイルの Format & Lint
 
 Format: `make black`
 
 Lint: `make pyflakes`
 
-## （開発者向け）GLSL ファイルの Format
+### GLSL ファイルの Format
 
 `make clang-format`
 
-## （開発者向け）one-by-one push
+### one-by-one push
 
 `make one-by-one-push`
