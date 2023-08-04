@@ -36,6 +36,7 @@ class Context:
         self.max_spp = 0
 
         self.switch = 0
+        self.output_image = None
         self.input_image_list = None
         self.seed_image_list = None
 
@@ -45,6 +46,11 @@ class Context:
 
     def bind_data(self, env_map_path):
         data = np.zeros((self.height, self.width, 4)).astype("float32").tobytes()
+
+        # 送信用画像（トーンマップおよびガンマ変換適用済み）
+        self.output_image = self.context.texture(
+            (self.width, self.height), components=4, dtype="f4"
+        )
 
         # サンプリングを再開するために用いる raw 画像
         self.input_image_list = [
@@ -115,6 +121,8 @@ class Context:
             raise RuntimeError("program has not been created")
         if self.vao is None:
             raise RuntimeError("vertex array object has not been assigned")
+        if self.output_image is None:
+            raise RuntimeError("output_image has not been assigned")
         if self.input_image_list is None:
             raise RuntimeError("input_image_list has not been assigned")
         if self.seed_image_list is None:
@@ -132,9 +140,7 @@ class Context:
 
         self.fbo = self.context.framebuffer(
             [
-                self.context.texture(
-                    (self.width, self.height), components=4, dtype="f4"
-                ),
+                self.output_image,
                 self.input_image_list[self.switch],
                 self.seed_image_list[self.switch],
             ]
