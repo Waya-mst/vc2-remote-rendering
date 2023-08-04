@@ -28,6 +28,11 @@ class Context:
         self.height = height
         self.sample_per_frame = sample_per_frame
 
+        with open("assets/glsl/vertex_shader.glsl", encoding="utf-8") as vs_f:
+            self.vertex_shader_str = vs_f.read()
+        with open("assets/glsl/fragment_shader.glsl", encoding="utf-8") as fs_f:
+            self.fragment_shader_str = fs_f.read()
+
         self.current_sample = 1
         self.theta = 0
         self.phi = 0
@@ -86,12 +91,8 @@ class Context:
 
     def create_program(self, sample_max=None):
         self.program = self.context.program(
-            vertex_shader=open(
-                "assets/glsl/vertex_shader.glsl", encoding="utf-8"
-            ).read(),
-            fragment_shader=Template(
-                open("assets/glsl/fragment_shader.glsl", encoding="utf-8").read()
-            ).substitute(
+            vertex_shader=self.vertex_shader_str,
+            fragment_shader=Template(self.fragment_shader_str).substitute(
                 width=self.width,
                 height=self.height,
                 sample_max=sample_max or self.sample_per_frame,
