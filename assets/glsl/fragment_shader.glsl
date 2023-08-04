@@ -3,7 +3,6 @@
 #define POW2(X) ((X) * (X))
 #define POW5(X) ((X) * (X) * (X) * (X) * (X))
 #define DEPTH_MAX (16)
-#define SAMPLE_MAX ($sample_max)
 #define DELTA (0.01)
 #define PI (3.14159265359)
 
@@ -20,6 +19,7 @@ uniform sampler2D input_image;
 uniform usampler2D seed_image;
 uniform sampler2D background_image;
 
+uniform int sample_max;
 uniform int current_sample;
 uniform float theta;
 uniform float phi;
@@ -212,7 +212,7 @@ void main() {
 
   mat3 M2 = mat3(1, 0, 0, 0, cos(phi), -sin(phi), 0, sin(phi), cos(phi));
 
-  for (int i = 0; i < SAMPLE_MAX; i++) {
+  for (int i = 0; i < sample_max; i++) {
     vec4 color_next = vec4(0.0f);
 
     vec3 position_screen = vec3(

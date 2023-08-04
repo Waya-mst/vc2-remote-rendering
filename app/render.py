@@ -89,13 +89,12 @@ class Context:
             Context.TEXTURE_UNIT_BACKGROUND_IMAGE
         )
 
-    def create_program(self, sample_max=None):
+    def create_program(self):
         self.program = self.context.program(
             vertex_shader=self.vertex_shader_str,
             fragment_shader=Template(self.fragment_shader_str).substitute(
                 width=self.width,
                 height=self.height,
-                sample_max=sample_max or self.sample_per_frame,
             ),
             fragment_outputs={
                 "output_color": Context.ATTACHMENT_INDEX_OUTPUT_COLOR,
@@ -117,7 +116,7 @@ class Context:
             self.program, vbo, "position_vertices"
         )
 
-    def render(self):
+    def render(self, sample_max):
         if self.program is None:
             raise RuntimeError("program has not been created")
         if self.vao is None:
@@ -132,6 +131,7 @@ class Context:
         if self.fbo is not None:
             self.fbo.release()
 
+        self.program["sample_max"].value = sample_max
         self.program["current_sample"].value = self.current_sample
         self.program["theta"].value = self.theta
         self.program["phi"].value = self.phi
