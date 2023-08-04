@@ -176,4 +176,5 @@ class Context:
         buffer = cv2.cvtColor(buffer, cv2.COLOR_BGRA2RGBA)
         buffer = (buffer * 255).astype(np.uint8)
         is_success, binary = cv2.imencode(".jpg", buffer)
-        return io.BytesIO(binary)
+        with io.BytesIO(binary) as b:
+            return b.getvalue()

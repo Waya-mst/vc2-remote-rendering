@@ -32,7 +32,7 @@ class WebSocket:
 
                 await asyncio.gather(
                     # レンダリング結果画像を送信する（識別子：0000）
-                    websocket.send(b"0000" + self.context.get_binary().getvalue()),
+                    websocket.send(b"0000" + self.context.get_binary()),
                     # 現在の1画素あたりのサンプル数を送信する（識別子：0001）
                     websocket.send(b"0001" + bytes(next_frame)),
                 )
