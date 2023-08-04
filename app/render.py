@@ -28,6 +28,11 @@ class Context:
         self.height = height
         self.sample_per_frame = sample_per_frame
 
+        with open("assets/glsl/vertex_shader.glsl", encoding="utf-8") as vs_f:
+            self.vertex_shader_str = vs_f.read()
+        with open("assets/glsl/fragment_shader.glsl", encoding="utf-8") as fs_f:
+            self.fragment_shader_str = fs_f.read()
+
         self.current_sample = 1
         self.theta = 0
         self.phi = 0
@@ -36,6 +41,7 @@ class Context:
         self.max_spp = 0
 
         self.switch = 0
+        self.output_image = None
         self.input_image_list = None
         self.seed_image_list = None
 
@@ -45,6 +51,11 @@ class Context:
 
     def bind_data(self, env_map_path):
         data = np.zeros((self.height, self.width, 4)).astype("float32").tobytes()
+
+        # 送信用画像（トーンマップおよびガンマ変換適用済み）
+        self.output_image = self.context.texture(
+            (self.width, self.height), components=4, dtype="f4"
+        )
 
         # サンプリングを再開するために用いる raw 画像
         self.input_image_list = [
@@ -78,17 +89,12 @@ class Context:
             Context.TEXTURE_UNIT_BACKGROUND_IMAGE
         )
 
-    def create_program(self, sample_max=None):
+    def create_program(self):
         self.program = self.context.program(
-            vertex_shader=open(
-                "assets/glsl/vertex_shader.glsl", encoding="utf-8"
-            ).read(),
-            fragment_shader=Template(
-                open("assets/glsl/fragment_shader.glsl", encoding="utf-8").read()
-            ).substitute(
+            vertex_shader=self.vertex_shader_str,
+            fragment_shader=Template(self.fragment_shader_str).substitute(
                 width=self.width,
                 height=self.height,
-                sample_max=sample_max or self.sample_per_frame,
             ),
             fragment_outputs={
                 "output_color": Context.ATTACHMENT_INDEX_OUTPUT_COLOR,
@@ -110,16 +116,22 @@ class Context:
             self.program, vbo, "position_vertices"
         )
 
-    def render(self):
+    def render(self, sample_max):
         if self.program is None:
             raise RuntimeError("program has not been created")
         if self.vao is None:
             raise RuntimeError("vertex array object has not been assigned")
+        if self.output_image is None:
+            raise RuntimeError("output_image has not been assigned")
         if self.input_image_list is None:
             raise RuntimeError("input_image_list has not been assigned")
         if self.seed_image_list is None:
             raise RuntimeError("seed_image_list has not been assigned")
 
+        if self.fbo is not None:
+            self.fbo.release()
+
+        self.program["sample_max"].value = sample_max
         self.program["current_sample"].value = self.current_sample
         self.program["theta"].value = self.theta
         self.program["phi"].value = self.phi
@@ -132,9 +144,7 @@ class Context:
 
         self.fbo = self.context.framebuffer(
             [
-                self.context.texture(
-                    (self.width, self.height), components=4, dtype="f4"
-                ),
+                self.output_image,
                 self.input_image_list[self.switch],
                 self.seed_image_list[self.switch],
             ]
@@ -166,4 +176,5 @@ class Context:
         buffer = cv2.cvtColor(buffer, cv2.COLOR_BGRA2RGBA)
         buffer = (buffer * 255).astype(np.uint8)
         is_success, binary = cv2.imencode(".jpg", buffer)
-        return io.BytesIO(binary)
+        with io.BytesIO(binary) as b:
+            return b.getvalue()
