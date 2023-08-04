@@ -128,6 +128,9 @@ class Context:
         if self.seed_image_list is None:
             raise RuntimeError("seed_image_list has not been assigned")
 
+        if self.fbo is not None:
+            self.fbo.release()
+
         self.program["current_sample"].value = self.current_sample
         self.program["theta"].value = self.theta
         self.program["phi"].value = self.phi
