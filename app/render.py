@@ -100,9 +100,8 @@ class Context:
             np.array(
                 [
                     [-1, -1],
-                    [-1, 1],
-                    [1, -1],
-                    [1, 1],
+                    [-1, 3],
+                    [3, -1],
                 ],
                 dtype="f4",
             )
@@ -149,7 +148,7 @@ class Context:
             Context.ATTACHMENT_INDEX_SEED_VALUE
         )
         self.context.clear()
-        self.vao.render(moderngl.TRIANGLE_STRIP)
+        self.vao.render(moderngl.TRIANGLES)
 
     def get_binary(self):
         if self.fbo is None:
