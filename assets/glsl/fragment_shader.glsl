@@ -188,7 +188,7 @@ vec4 toneMap(const in vec4 color, const in float white) {
 // Gamma Correction
 vec4 gammaCorrect(const in vec4 color, const in float gamma) {
   float c = 1.0f / gamma;
-  return vec4(pow(color.r, c), pow(color.g, c), pow(color.b, c), 0.0f);
+  return vec4(pow(color.r, c), pow(color.g, c), pow(color.b, c), 1.0f);
 }
 
 void main() {
