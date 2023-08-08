@@ -87,17 +87,12 @@ from colab.tunnel import Tunnel
 
 tunnel = Tunnel()
 
-# Ngrok authtoken を指定
-# authtoken の値をダッシュボード (https://dashboard.ngrok.com/get-started/your-authtoken) から取得し，フォームに入力する
-# 毎回の入力を省略する場合は，authtoken の値を引数として渡す
-tunnel.install_auth_token()
-
 # Google Colaboratory のサーバと最も低遅延で通信できるトンネルを見つける
 tunnel.calc_region_priority()
 
 # グローバルアクセス可能なURLを取得する
 public_url = tunnel.get_public_url(port=8030)
-print(public_url.replace("tcp://", "ws://"))
+print(public_url.replace("https://", "wss://"))
 """
 
 fragments[

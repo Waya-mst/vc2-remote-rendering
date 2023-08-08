@@ -9,20 +9,13 @@ class Tunnel:
 
     def __init__(self):
         self.region_priority_list = Tunnel.region_list
-        self.auth_token = None
-
-    def install_auth_token(self, auth_token=None):
-        if auth_token is None:
-            self.auth_token = input()
-        else:
-            self.auth_token = auth_token
 
     def calc_region_priority(self):
         key_list = []
         for region in Tunnel.region_list:
             public_url = self.get_public_url(region=region)
             key = float("inf")
-            key = ping(public_url.replace("tcp://", "").split(":")[0])
+            key = ping(public_url.replace("https://", "").split(":")[0])
             ngrok.disconnect(public_url)
             ngrok.kill()
             key_list.append(key)
@@ -36,7 +29,7 @@ class Tunnel:
     def get_public_url(self, port=80, region=None):
         if region == None:
             region = self.region_priority_list[0]
-        pyngrok_config = conf.PyngrokConfig(region=region, auth_token=self.auth_token)
+        pyngrok_config = conf.PyngrokConfig(region=region)
         return ngrok.connect(
-            port, proto="tcp", pyngrok_config=pyngrok_config
+            port, proto="http", pyngrok_config=pyngrok_config
         ).public_url
