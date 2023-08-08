@@ -21,13 +21,17 @@
 │   ├── notebook.py
 │   ├── tunnel.py
 │   └── websocket_server.ipynb
+├── deploy
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   └── README.md
 ├── Makefile
 ├── one_by_one_push.py
 ├── README.md
 ├── requirements_dev.txt
 └── requirements.txt
 
-7 directories, 15 files
+8 directories, 18 files
 ```
 
 各ファイルの内容を以下に示す：
@@ -71,6 +75,18 @@
 - colab/websocket_server.ipynb
 
   自動生成されたノートブックファイル．
+
+- deploy/Dockerfile
+
+  デモサイトをビルドするための Dockerfile．
+
+- deploy/nginx.conf
+
+  デモサイトをホスティングする Nginx の設定ファイル．
+
+- deploy/README.md
+
+  デプロイ手順書．
 
 - Makefile
 
@@ -167,6 +183,7 @@ python app/server.py
 - 左ボタンでドラッグするとカメラ回転
 - 右ボタンでドラッグするとカメラ移動
 
+deploy/README.md の手順に従って，ローカルホストにデモサイトをデプロイしてもよい．
 
 ## 開発者向け情報
 
