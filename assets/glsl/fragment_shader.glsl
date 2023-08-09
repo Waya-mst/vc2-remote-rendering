@@ -61,7 +61,7 @@ float rand() {
   xors[0] = xors[1];
   xors[1] = xors[2];
   xors[2] = xors[3];
-  xors[3] = (xors[3] ^ (xors[3] >> 19)) - (t ^ (t >> 18));
+  xors[3] = (xors[3] ^ (xors[3] >> 19)) ^ (t ^ (t >> 8));
   return xors[3] / 4294967295.0f;
 }
 
