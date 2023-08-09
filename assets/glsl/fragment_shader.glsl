@@ -153,6 +153,17 @@ void background(inout Ray ray, inout Hit hit) {
           .rgb;
 }
 
+vec3 random_direction() {
+  float theta = rand() * 2.0 * PI;
+  float phi = acos(2.0 * rand() - 1.0);
+
+  float x = sin(phi) * cos(theta);
+  float y = sin(phi) * sin(theta);
+  float z = cos(phi);
+
+  return normalize(vec3(x, y, z));
+}
+
 // 完全拡散反射面
 void diffuse(inout Ray ray, const in Hit hit) {
   if (dot(-ray.direction, hit.normal) < 0) {
@@ -161,21 +172,19 @@ void diffuse(inout Ray ray, const in Hit hit) {
     return;
   }
   ray.depth++;
-  ray.direction.y = sqrt(rand());
-  float d = sqrt(1 - POW2(ray.direction.y));
-  float v = rand() * 2.0f * PI;
-  vec3 ex = vec3(1.0f, 0.0f, 0.0f);
-  vec3 ey = vec3(0.0f, 1.0f, 0.0f);
-  vec3 ez = vec3(0.0f, 0.0f, 1.0f);
-  float dx = abs(dot(hit.normal, ex));
-  float dy = abs(dot(hit.normal, ey));
-  float dz = abs(dot(hit.normal, ez));
-  vec3 vy = (dy < dx) ? (dz < dy) ? ez : ey : (dz < dx) ? ez : ex;
-  vec3 vx = normalize(cross(vy, hit.normal));
-  vec3 vz = normalize(cross(vx, hit.normal));
+  float u = rand();
+  float z = sqrt(u);
+  float d = sqrt(1 - u);
+  float phi = rand() * 2.0f * PI;
+  vec3 random_vector = random_direction();
 
-  ray.direction = normalize(vx * d * cos(v) + hit.normal * ray.direction.y +
-                            vz * d * sin(v));
+  vec3 tangent =
+      normalize(random_vector - dot(random_vector, hit.normal) * hit.normal);
+  vec3 bitangent = normalize(cross(hit.normal, tangent));
+
+  ray.direction = normalize(tangent * d * cos(phi) + hit.normal * z +
+                            bitangent * d * sin(phi));
+
   ray.origin = hit.position + hit.normal * DELTA;
   ray.scatter *= hit.scatter;
 }
