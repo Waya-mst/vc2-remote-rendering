@@ -213,6 +213,10 @@ Lint: `make pyflakes`
 
 `make clang-format`
 
+### Pytest の実行
+
+`pytest`
+
 ### one-by-one push
 
 `make one-by-one-push`
