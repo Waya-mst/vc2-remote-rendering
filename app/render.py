@@ -64,7 +64,7 @@ class Context:
         ]
 
         seed = (
-            np.random.default_rng()
+            np.random.default_rng(0)
             .integers(
                 low=0, high=2**32, size=(self.width, self.height, 4), dtype=np.uint32
             )
