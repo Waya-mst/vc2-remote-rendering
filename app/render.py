@@ -73,8 +73,8 @@ class Context:
 
         # 乱数のシード画像（各画素で別々のシード値を使用）
         self.seed_image_list = [
-            self.context.texture((self.width, self.height), 4, seed, dtype="f4"),
-            self.context.texture((self.width, self.height), 4, seed, dtype="f4"),
+            self.context.texture((self.width, self.height), 4, seed, dtype="u4"),
+            self.context.texture((self.width, self.height), 4, seed, dtype="u4"),
         ]
 
         # 環境マップ画像
