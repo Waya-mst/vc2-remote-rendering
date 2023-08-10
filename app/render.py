@@ -151,12 +151,14 @@ class Context:
         )
         self.fbo.use()
         self.switch = ~self.switch & 1
-        self.context.sampler(texture=self.input_image_list[self.switch]).use(
-            Context.ATTACHMENT_INDEX_INPUT_COLOR
-        )
-        self.context.sampler(texture=self.seed_image_list[self.switch]).use(
-            Context.ATTACHMENT_INDEX_SEED_VALUE
-        )
+        self.context.sampler(
+            texture=self.input_image_list[self.switch],
+            filter=(moderngl.NEAREST, moderngl.NEAREST),
+        ).use(Context.ATTACHMENT_INDEX_INPUT_COLOR)
+        self.context.sampler(
+            texture=self.seed_image_list[self.switch],
+            filter=(moderngl.NEAREST, moderngl.NEAREST),
+        ).use(Context.ATTACHMENT_INDEX_SEED_VALUE)
         self.context.clear()
         self.vao.render(moderngl.TRIANGLES)
 
