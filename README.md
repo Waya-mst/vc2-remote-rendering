@@ -124,6 +124,12 @@ venv は仮想環境の名前で，任意の文字列に変更可能
 
 python version は Google Colaboratory の [Release Notes](https://colab.research.google.com/notebooks/relnotes.ipynb) で書かれているバージョンに合わせる（2023/07/21 時点で 3.10.12）
 
+### 仮想環境の削除
+
+```bash
+conda remove -n venv --all
+```
+
 ### 仮想環境の有効化
 
 ```bash
@@ -164,7 +170,6 @@ Windows (powershell)
 ```powershell
 (New-Item -Itemtype Directory -Force assets/hdr | Out-Null && Push-Location assets/hdr &&  curl -O https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/museum_of_ethnography_1k.hdr && Pop-Location)
 ```
-
 
 ## サーバの起動
 
