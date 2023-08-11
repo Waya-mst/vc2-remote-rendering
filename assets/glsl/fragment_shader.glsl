@@ -61,21 +61,27 @@ float rand() {
   xors[0] = xors[1];
   xors[1] = xors[2];
   xors[2] = xors[3];
-  xors[3] = (xors[3] ^ (xors[3] >> 19)) - (t ^ (t >> 18));
+  xors[3] = (xors[3] ^ (xors[3] >> 19)) ^ (t ^ (t >> 8));
   return xors[3] / 4294967295.0f;
 }
 
 // 球と光線の交点
 bool hitSphere(const in Sphere sphere, const in Ray ray, inout Hit hit) {
-  vec3 oc = ray.origin - sphere.center;
-  float a = dot(ray.direction, ray.direction);
-  float b = dot(oc, ray.direction);
-  float c = dot(oc, oc) - POW2(sphere.radius);
-  float d = POW2(b) - a * c;
+  // float a = dot(ray.direction, ray.direction);
+  // ray.direction は単位ベクトルであり，必ず 1 になるので省略
+  float b = dot(ray.origin, ray.direction) - dot(sphere.center, ray.direction);
+  float c = dot(ray.origin, ray.origin) - 2 * dot(ray.origin, sphere.center) +
+            dot(sphere.center, sphere.center) - POW2(sphere.radius);
+  float d = POW2(b) - c;
+
+  float t1, t2;
+  t1 = abs(b) + sqrt(d);
+  t1 = (b < 0) ? t1 : -t1;
+  t2 = c / t1;
 
   float t;
   if (d > 0) {
-    t = (-b - sqrt(d)) / a;
+    t = min(t1, t2);
     if (0 < t && t < hit.t) {
       hit.t = t;
       hit.position = ray.origin + t * ray.direction;
@@ -85,7 +91,7 @@ bool hitSphere(const in Sphere sphere, const in Ray ray, inout Hit hit) {
       hit.material = sphere.material;
       return true;
     }
-    t = (-b + sqrt(d)) / a;
+    t = max(t1, t2);
     if (0 < t && t < hit.t) {
       hit.t = t;
       hit.position = ray.origin + t * ray.direction;
@@ -153,6 +159,17 @@ void background(inout Ray ray, inout Hit hit) {
           .rgb;
 }
 
+vec3 random_direction() {
+  float theta = rand() * 2.0 * PI;
+  float phi = acos(2.0 * rand() - 1.0);
+
+  float x = sin(phi) * cos(theta);
+  float y = sin(phi) * sin(theta);
+  float z = cos(phi);
+
+  return normalize(vec3(x, y, z));
+}
+
 // 完全拡散反射面
 void diffuse(inout Ray ray, const in Hit hit) {
   if (dot(-ray.direction, hit.normal) < 0) {
@@ -161,21 +178,19 @@ void diffuse(inout Ray ray, const in Hit hit) {
     return;
   }
   ray.depth++;
-  ray.direction.y = sqrt(rand());
-  float d = sqrt(1 - POW2(ray.direction.y));
-  float v = rand() * 2.0f * PI;
-  vec3 ex = vec3(1.0f, 0.0f, 0.0f);
-  vec3 ey = vec3(0.0f, 1.0f, 0.0f);
-  vec3 ez = vec3(0.0f, 0.0f, 1.0f);
-  float dx = abs(dot(hit.normal, ex));
-  float dy = abs(dot(hit.normal, ey));
-  float dz = abs(dot(hit.normal, ez));
-  vec3 vy = (dy < dx) ? (dz < dy) ? ez : ey : (dz < dx) ? ez : ex;
-  vec3 vx = normalize(cross(vy, hit.normal));
-  vec3 vz = normalize(cross(vx, hit.normal));
+  float u = rand();
+  float z = sqrt(u);
+  float d = sqrt(1 - u);
+  float phi = rand() * 2.0f * PI;
+  vec3 random_vector = random_direction();
 
-  ray.direction = normalize(vx * d * cos(v) + hit.normal * ray.direction.y +
-                            vz * d * sin(v));
+  vec3 tangent =
+      normalize(random_vector - dot(random_vector, hit.normal) * hit.normal);
+  vec3 bitangent = normalize(cross(hit.normal, tangent));
+
+  ray.direction = normalize(tangent * d * cos(phi) + hit.normal * z +
+                            bitangent * d * sin(phi));
+
   ray.origin = hit.position + hit.normal * DELTA;
   ray.scatter *= hit.scatter;
 }
