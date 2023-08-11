@@ -67,15 +67,21 @@ float rand() {
 
 // 球と光線の交点
 bool hitSphere(const in Sphere sphere, const in Ray ray, inout Hit hit) {
-  vec3 oc = ray.origin - sphere.center;
-  float a = dot(ray.direction, ray.direction);
-  float b = dot(oc, ray.direction);
-  float c = dot(oc, oc) - POW2(sphere.radius);
-  float d = POW2(b) - a * c;
+  // float a = dot(ray.direction, ray.direction);
+  // ray.direction は単位ベクトルであり，必ず 1 になるので省略
+  float b = dot(ray.origin, ray.direction) - dot(sphere.center, ray.direction);
+  float c = dot(ray.origin, ray.origin) - 2 * dot(ray.origin, sphere.center) +
+            dot(sphere.center, sphere.center) - POW2(sphere.radius);
+  float d = POW2(b) - c;
+
+  float t1, t2;
+  t1 = abs(b) + sqrt(d);
+  t1 = (b < 0) ? t1 : -t1;
+  t2 = c / t1;
 
   float t;
   if (d > 0) {
-    t = (-b - sqrt(d)) / a;
+    t = min(t1, t2);
     if (0 < t && t < hit.t) {
       hit.t = t;
       hit.position = ray.origin + t * ray.direction;
@@ -85,7 +91,7 @@ bool hitSphere(const in Sphere sphere, const in Ray ray, inout Hit hit) {
       hit.material = sphere.material;
       return true;
     }
-    t = (-b + sqrt(d)) / a;
+    t = max(t1, t2);
     if (0 < t && t < hit.t) {
       hit.t = t;
       hit.position = ray.origin + t * ray.direction;
