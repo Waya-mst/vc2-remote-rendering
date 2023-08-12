@@ -1,6 +1,5 @@
 PYTHON_FILES=$(shell \
 	find . \
-	-path "./.ignore" -prune -o \
 	-path "./venv" -prune -o \
 	-type f -name "*.py" \
 	-exec echo -n {}" " \; \
@@ -8,7 +7,6 @@ PYTHON_FILES=$(shell \
 
 GLSL_FILES=$(shell \
 	find . \
-	-path "./.ignore" -prune -o \
 	-path "./venv" -prune -o \
 	-type f -name "*.glsl" \
 	-exec echo -n {}" " \; \
