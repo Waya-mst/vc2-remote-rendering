@@ -1,4 +1,5 @@
 import io
+import os
 import platform
 from string import Template
 
@@ -20,7 +21,7 @@ class Context:
             "standalone": True,
             "require": 330,
         }
-        if platform.system() == "Linux":
+        if platform.system() == "Linux" and "LD_PRELOAD" not in os.environ:
             kwargs["backend"] = "egl"
         self.context = moderngl.create_context(**kwargs)
 
