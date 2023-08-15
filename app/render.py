@@ -113,8 +113,9 @@ class Context:
                 dtype="f4",
             )
         )
-        self.vao = self.context.simple_vertex_array(
-            self.program, vbo, "position_vertices"
+        self.vao = self.context.vertex_array(
+            self.program,
+            [(vbo, "2f /v", "position_vertices")],
         )
 
     def render(self, sample_max):
