@@ -134,6 +134,7 @@ jobs:
           sudo apt-get install libegl1
           . venv/bin/activate
           pip install -r requirements_dev.txt
+          python -m moderngl
           pytest
           deactivate
       - run: echo "🍏 This job's status is ${{ job.status }}."
@@ -161,6 +162,7 @@ jobs:
         run: |
           . venv/bin/activate
           pip install -r requirements_dev.txt
+          python -m moderngl
           pytest
           deactivate
       - run: echo "🍏 This job's status is ${{ job.status }}."
@@ -193,5 +195,6 @@ jobs:
           $env:GLCONTEXT_WIN_LIBGL = "C:/msys64/ucrt64/bin/opengl32.dll"
           $env:LIBGL_ALWAYS_SOFTWARE = "1"
           pip install -r requirements_dev.txt
+          python -m moderngl
           pytest -s
       - run: echo "🍏 This job's status is ${{ job.status }}."
