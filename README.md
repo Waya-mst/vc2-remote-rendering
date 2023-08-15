@@ -25,13 +25,20 @@
 │   ├── Dockerfile
 │   ├── nginx.conf
 │   └── README.md
+├── tests
+│   ├── data
+│   │   ├── reference.jpg
+│   │   └── test_env_map.hdr
+│   ├── __init__.py
+│   ├── conftest.py
+│   └── test_render.py
 ├── Makefile
 ├── one_by_one_push.py
 ├── README.md
 ├── requirements_dev.txt
 └── requirements.txt
 
-8 directories, 18 files
+10 directories, 23 files
 ```
 
 各ファイルの内容を以下に示す：
@@ -87,6 +94,10 @@
 - deploy/README.md
 
   デプロイ手順書．
+
+- tests/
+
+  pytest に使用するディレクトリ
 
 - Makefile
 
