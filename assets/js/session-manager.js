@@ -117,10 +117,10 @@ class SessionManager {
       // WebSocket が初期化され，コネクションが開かれている場合
       this.websocket.send(
         JSON.stringify({
-          theta: 0,
-          phi: 0,
-          moveX: 0,
-          moveY: 0,
+          theta: this.theta,
+          phi: this.phi,
+          moveX: this.moveX,
+          moveY: this.moveY,
           maxSpp: this.maxSpp.value,
         })
       );
@@ -130,10 +130,10 @@ class SessionManager {
         this.websocket = ws;
         this.websocket.send(
           JSON.stringify({
-            theta: 0,
-            phi: 0,
-            moveX: 0,
-            moveY: 0,
+            theta: this.theta,
+            phi: this.phi,
+            moveX: this.moveX,
+            moveY: this.moveY,
             maxSpp: this.maxSpp.value,
           })
         );
