@@ -165,7 +165,7 @@ pip install -r requirements.txt
 pip freeze > requirements.txt
 ```
 
-開発環境の場合は，`requirements_dev.txt` を用いてインストールする（black, pyflakes, nbformat の依存パッケージが含まれる）：
+開発環境の場合は，`requirements_dev.txt` を用いてインストールする（black, pyflakes, nbformat, clang-format, pytest の依存パッケージが含まれる）：
 ```bash
 pip install -r requirements_dev.txt
 ```
