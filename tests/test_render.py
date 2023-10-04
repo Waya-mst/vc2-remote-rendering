@@ -56,4 +56,6 @@ def test_get_binary(ctx):
     )
     mssim = get_mssim(reference, rendered)
 
+    print("\nSSIM: " + str(mssim) + "\n")
+
     assert mssim > 0.98

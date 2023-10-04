@@ -135,7 +135,7 @@ jobs:
           . venv/bin/activate
           pip install -r requirements_dev.txt
           python -m moderngl
-          pytest
+          pytest -s
           deactivate
       - run: echo "🍏 This job's status is ${{ job.status }}."
 
@@ -163,7 +163,7 @@ jobs:
           . venv/bin/activate
           pip install -r requirements_dev.txt
           python -m moderngl
-          pytest
+          pytest -s
           deactivate
       - run: echo "🍏 This job's status is ${{ job.status }}."
 
