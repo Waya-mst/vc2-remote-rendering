@@ -233,3 +233,17 @@ Lint: `make pyflakes`
 ### one-by-one push
 
 `make one-by-one-push`
+
+## 関連資料
+
+国際
+
+- Masaru Ohkawara, Hideo Saito, Issei Fujishiro: “Experiencing GPU path tracing in online courses,” Graphics and Visual Computing, Vol. 4, June 2021 (pre-proof: April 22, 2021), 200022, ISSN 2666-6294 [doi: [10.1016/j.gvc.2021.200022](https://doi.org/10.1016/j.gvc.2021.200022)].
+
+- Masaru Ohkawara, Hideo Saito, Issei Fujishiro: “Experiencing GPU path tracing in online courses,” invited by Eurographics 2021 Education Papers, Vienna (hybrid), May 2021.
+
+国内
+
+- 大河原 将，藤代 一成：「遠隔社会におけるグラフィックスパラダイム」，FIT2022，CI-001，2022年9月
+
+- 大河原 将，斎藤 英雄，藤代 一成：「 GPUパストレーシングを体験するクラウドベースのコンピュータグラフィックス実習教材」，情報処理学会研究報告，Vol. 2020–CG–178，No. 1，慶應義塾大学 (オンライン開催) ，2020年6月
