@@ -1,5 +1,26 @@
 # VC2 Remote Rendering
 
+## クイックスタート
+
+### サーバ
+
+下記のバッジから notebook を開く：
+
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](http://colab.research.google.com/github/msrohkwr/vc2-remote-rendering/blob/main/colab/websocket_server.ipynb)
+
+[ランタイム] > [すべてのセルを実行] と操作して，サーバを起動する．
+
+`wss://` で始まる URL を控える．
+
+### クライアント
+
+下記のいずれかのリンクからデモサイトにアクセスする：
+
+- https://msrohkwr.github.io/vc2-remote-rendering/
+- https://demo-mafd.onrender.com/
+
+控えた URL をフォームに入力し，start ボタンを押下する．
+
 ## レポジトリ構成
 
 リポジトリは下記のように構成されている：
@@ -134,7 +155,7 @@ conda create --name venv python=3.10.12
 
 venv は仮想環境の名前で，任意の文字列に変更可能
 
-python version は Google Colaboratory の [Release Notes](https://colab.research.google.com/notebooks/relnotes.ipynb) で書かれているバージョンに合わせる（2023/07/21 時点で 3.10.12）
+python version は Google Colaboratory の [Release Notes](https://colab.research.google.com/notebooks/relnotes.ipynb) で書かれているバージョンに合わせる（2023/11/08 時点で 3.10.12）
 
 ### 仮想環境の削除
 
@@ -247,6 +268,8 @@ Lint: `make pyflakes`
 - Masaru Ohkawara, Hideo Saito, Issei Fujishiro: “Experiencing GPU path tracing in online courses,” invited by Eurographics 2021 Education Papers, Vienna (hybrid), May 2021.
 
 国内
+
+- 大河原 将，藤代 一成：「可搬性を考慮したリモート/ローカル混成型のコンピュータグラフィックス実習教材」，情報処理学会研究報告，Vol. 2023-CG-192，No. 46，鳥取県立生涯学習センター，2023年11月
 
 - 大河原 将，藤代 一成：「遠隔社会におけるグラフィックスパラダイム」，FIT2022，CI-001，2022年9月
 
