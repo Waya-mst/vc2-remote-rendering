@@ -134,7 +134,7 @@ conda create --name venv python=3.10.12
 
 venv は仮想環境の名前で，任意の文字列に変更可能
 
-python version は Google Colaboratory の [Release Notes](https://colab.research.google.com/notebooks/relnotes.ipynb) で書かれているバージョンに合わせる（2023/07/21 時点で 3.10.12）
+python version は Google Colaboratory の [Release Notes](https://colab.research.google.com/notebooks/relnotes.ipynb) で書かれているバージョンに合わせる（2023/11/08 時点で 3.10.12）
 
 ### 仮想環境の削除
 
