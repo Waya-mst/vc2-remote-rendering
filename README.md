@@ -1,5 +1,26 @@
 # VC2 Remote Rendering
 
+## クイックスタート
+
+### サーバ
+
+下記のバッジから notebook を開く：
+
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](http://colab.research.google.com/github/msrohkwr/vc2-remote-rendering/blob/main/colab/websocket_server.ipynb)
+
+[ランタイム] > [すべてのセルを実行] と操作して，サーバを起動する．
+
+`wss://` で始まる URL を控える．
+
+### クライアント
+
+下記のいずれかのリンクからデモサイトにアクセスする：
+
+- https://msrohkwr.github.io/vc2-remote-rendering/
+- https://demo-mafd.onrender.com/
+
+控えた URL をフォームに入力し，start ボタンを押下する．
+
 ## レポジトリ構成
 
 リポジトリは下記のように構成されている：
