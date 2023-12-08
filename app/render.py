@@ -46,8 +46,8 @@ class Context:
         self.input_image_list = None
         self.seed_image_list = None
 
-        self.program = None
-        self.vao = None
+        self.program_path_trace = None
+        self.vao_path_trace = None
         self.fbo = None
 
     def bind_data(self, env_map_path):
@@ -91,7 +91,7 @@ class Context:
         )
 
     def create_program(self):
-        self.program = self.context.program(
+        self.program_path_trace = self.context.program(
             vertex_shader=self.vertex_shader_str,
             fragment_shader=Template(self.fragment_shader_str).substitute(
                 width=self.width,
@@ -113,49 +113,22 @@ class Context:
                 dtype="f4",
             )
         )
-        self.vao = self.context.vertex_array(
-            self.program,
+        self.vao_path_trace = self.context.vertex_array(
+            self.program_path_trace,
             [(vbo, "2f /v", "position_vertices")],
         )
 
-    def read_buffer(self, attachment):
-        if self.fbo is None:
-            raise RuntimeError("frame buffer object has not been assigned")
+    def path_trace(self, sample_max, program):
+        program["sample_max"].value = sample_max
+        program["current_sample"].value = self.current_sample
+        program["theta"].value = self.theta
+        program["phi"].value = self.phi
+        program["move_x"].value = self.move_x
+        program["move_y"].value = self.move_y
 
-        return np.frombuffer(
-            self.fbo.read(
-                components=4,
-                dtype="f4",
-                attachment=attachment,
-            ),
-            dtype="f4",
-        ).reshape(self.height, self.width, 4)
-
-    def render(self, sample_max):
-        if self.program is None:
-            raise RuntimeError("program has not been created")
-        if self.vao is None:
-            raise RuntimeError("vertex array object has not been assigned")
-        if self.output_image is None:
-            raise RuntimeError("output_image has not been assigned")
-        if self.input_image_list is None:
-            raise RuntimeError("input_image_list has not been assigned")
-        if self.seed_image_list is None:
-            raise RuntimeError("seed_image_list has not been assigned")
-
-        if self.fbo is not None:
-            self.fbo.release()
-
-        self.program["sample_max"].value = sample_max
-        self.program["current_sample"].value = self.current_sample
-        self.program["theta"].value = self.theta
-        self.program["phi"].value = self.phi
-        self.program["move_x"].value = self.move_x
-        self.program["move_y"].value = self.move_y
-
-        self.program["input_image"].value = Context.TEXTURE_UNIT_INPUT_IMAGE
-        self.program["seed_image"].value = Context.TEXTURE_UNIT_SEED_IMAGE
-        self.program["background_image"].value = Context.TEXTURE_UNIT_BACKGROUND_IMAGE
+        program["input_image"].value = Context.TEXTURE_UNIT_INPUT_IMAGE
+        program["seed_image"].value = Context.TEXTURE_UNIT_SEED_IMAGE
+        program["background_image"].value = Context.TEXTURE_UNIT_BACKGROUND_IMAGE
 
         self.fbo = self.context.framebuffer(
             [
@@ -175,7 +148,37 @@ class Context:
             filter=(moderngl.NEAREST, moderngl.NEAREST),
         ).use(Context.ATTACHMENT_INDEX_SEED_VALUE)
         self.context.clear()
-        self.vao.render(moderngl.TRIANGLES)
+        self.vao_path_trace.render(moderngl.TRIANGLES)
+
+    def read_buffer(self, attachment):
+        if self.fbo is None:
+            raise RuntimeError("frame buffer object has not been assigned")
+
+        return np.frombuffer(
+            self.fbo.read(
+                components=4,
+                dtype="f4",
+                attachment=attachment,
+            ),
+            dtype="f4",
+        ).reshape(self.height, self.width, 4)
+
+    def render(self, sample_max):
+        if self.program_path_trace is None:
+            raise RuntimeError("program_path_trace has not been created")
+        if self.vao_path_trace is None:
+            raise RuntimeError("vao_path_trace has not been assigned")
+        if self.output_image is None:
+            raise RuntimeError("output_image has not been assigned")
+        if self.input_image_list is None:
+            raise RuntimeError("input_image_list has not been assigned")
+        if self.seed_image_list is None:
+            raise RuntimeError("seed_image_list has not been assigned")
+
+        if self.fbo is not None:
+            self.fbo.release()
+
+        self.path_trace(sample_max, self.program_path_trace)
 
     def get_binary(self):
         buffer = self.read_buffer(Context.ATTACHMENT_INDEX_OUTPUT_COLOR)
