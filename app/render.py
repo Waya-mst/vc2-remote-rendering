@@ -35,6 +35,10 @@ class Context:
             "assets/glsl/fragment_shader_path_trace.glsl", encoding="utf-8"
         ) as fs_f:
             self.fragment_shader_str = fs_f.read()
+        with open(
+            "assets/glsl/fragment_shader_post_process.glsl", encoding="utf-8"
+        ) as fs_f:
+            self.post_process_str = fs_f.read()
 
         self.current_sample = 1
         self.theta = 0
@@ -49,7 +53,9 @@ class Context:
         self.seed_image_list = None
 
         self.program_path_trace = None
+        self.program_post_process = None
         self.vao_path_trace = None
+        self.vao_post_process = None
         self.fbo = None
 
     def bind_data(self, env_map_path):
@@ -105,6 +111,16 @@ class Context:
                 "seed_value": Context.ATTACHMENT_INDEX_SEED_VALUE,
             },
         )
+        self.program_post_process = self.context.program(
+            vertex_shader=self.vertex_shader_str,
+            fragment_shader=Template(self.post_process_str).substitute(
+                width=self.width,
+                height=self.height,
+            ),
+            fragment_outputs={
+                "output_color": Context.ATTACHMENT_INDEX_OUTPUT_COLOR,
+            },
+        )
         vbo = self.context.buffer(
             np.array(
                 [
@@ -117,6 +133,10 @@ class Context:
         )
         self.vao_path_trace = self.context.vertex_array(
             self.program_path_trace,
+            [(vbo, "2f /v", "position_vertices")],
+        )
+        self.vao_post_process = self.context.vertex_array(
+            self.program_post_process,
             [(vbo, "2f /v", "position_vertices")],
         )
 
@@ -152,6 +172,32 @@ class Context:
         self.context.clear()
         self.vao_path_trace.render(moderngl.TRIANGLES)
 
+    def post_process(self, luminance_average, luminance_max, program):
+        program["input_image"].value = Context.TEXTURE_UNIT_INPUT_IMAGE
+        program["luminance_average"].value = luminance_average
+        program["luminance_max"].value = luminance_max
+        program["key_value"].value = 0.18
+
+        self.fbo = self.context.framebuffer(
+            [
+                self.output_image,
+                self.input_image_list[self.switch],
+                self.seed_image_list[self.switch],
+            ]
+        )
+        self.fbo.use()
+        self.switch = ~self.switch & 1
+        self.context.sampler(
+            texture=self.input_image_list[self.switch],
+            filter=(moderngl.NEAREST, moderngl.NEAREST),
+        ).use(Context.ATTACHMENT_INDEX_INPUT_COLOR)
+        self.context.sampler(
+            texture=self.seed_image_list[self.switch],
+            filter=(moderngl.NEAREST, moderngl.NEAREST),
+        ).use(Context.ATTACHMENT_INDEX_SEED_VALUE)
+        self.context.clear()
+        self.vao_post_process.render(moderngl.TRIANGLES)
+
     def read_buffer(self, attachment):
         if self.fbo is None:
             raise RuntimeError("frame buffer object has not been assigned")
@@ -168,8 +214,12 @@ class Context:
     def render(self, sample_max):
         if self.program_path_trace is None:
             raise RuntimeError("program_path_trace has not been created")
+        if self.program_post_process is None:
+            raise RuntimeError("program_post_process has not been created")
         if self.vao_path_trace is None:
             raise RuntimeError("vao_path_trace has not been assigned")
+        if self.vao_post_process is None:
+            raise RuntimeError("vao_path_process has not been assigned")
         if self.output_image is None:
             raise RuntimeError("output_image has not been assigned")
         if self.input_image_list is None:
@@ -181,6 +231,19 @@ class Context:
             self.fbo.release()
 
         self.path_trace(sample_max, self.program_path_trace)
+
+        buffer = self.read_buffer(Context.ATTACHMENT_INDEX_INPUT_COLOR)
+        luminance = (
+            0.27 * buffer[:, :, 0] + 0.67 * buffer[:, :, 1] + 0.06 * buffer[:, :, 2]
+        )
+        luminance_average = np.exp(
+            np.mean(np.log(np.finfo(np.float32).tiny + luminance))
+        )
+        luminance_max = buffer.max()
+
+        self.post_process(luminance_average, luminance_max, self.program_post_process)
+
+        self.switch = ~self.switch & 1
 
     def get_binary(self):
         buffer = self.read_buffer(Context.ATTACHMENT_INDEX_OUTPUT_COLOR)

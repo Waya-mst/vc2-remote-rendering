@@ -51,6 +51,11 @@ fragments["write_fragment_shader_path_trace.glsl"] = (
     + open("assets/glsl/fragment_shader_path_trace.glsl", encoding="utf-8").read()
 )
 
+fragments["write_fragment_shader_post_process.glsl"] = (
+    "%%file assets/glsl/fragment_shader_post_process.glsl\n"
+    + open("assets/glsl/fragment_shader_post_process.glsl", encoding="utf-8").read()
+)
+
 fragments["write_server.py"] = (
     "%%file app/server.py\n" + open("app/server.py", encoding="utf-8").read()
 )
@@ -118,6 +123,7 @@ notebook["cells"] = [
     new_code_cell("make_directories"),
     new_code_cell("write_vertex_shader.glsl"),
     new_code_cell("write_fragment_shader_path_trace.glsl"),
+    new_code_cell("write_fragment_shader_post_process.glsl"),
     new_code_cell("write_server.py"),
     new_code_cell("write_render.py"),
     new_code_cell("download_environment_map"),
