@@ -118,6 +118,19 @@ class Context:
             [(vbo, "2f /v", "position_vertices")],
         )
 
+    def read_buffer(self, attachment):
+        if self.fbo is None:
+            raise RuntimeError("frame buffer object has not been assigned")
+
+        return np.frombuffer(
+            self.fbo.read(
+                components=4,
+                dtype="f4",
+                attachment=attachment,
+            ),
+            dtype="f4",
+        ).reshape(self.height, self.width, 4)
+
     def render(self, sample_max):
         if self.program is None:
             raise RuntimeError("program has not been created")
@@ -165,17 +178,7 @@ class Context:
         self.vao.render(moderngl.TRIANGLES)
 
     def get_binary(self):
-        if self.fbo is None:
-            raise RuntimeError("frame buffer object has not been assigned")
-
-        buffer = np.frombuffer(
-            self.fbo.read(
-                components=4,
-                dtype="f4",
-                attachment=Context.ATTACHMENT_INDEX_OUTPUT_COLOR,
-            ),
-            dtype="f4",
-        ).reshape(self.height, self.width, 4)
+        buffer = self.read_buffer(Context.ATTACHMENT_INDEX_OUTPUT_COLOR)
         buffer = np.flipud(buffer)
         buffer = cv2.cvtColor(buffer, cv2.COLOR_BGRA2RGBA)
         buffer = (buffer * 255).astype(np.uint8)
