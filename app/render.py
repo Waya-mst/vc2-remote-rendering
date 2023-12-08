@@ -31,7 +31,9 @@ class Context:
 
         with open("assets/glsl/vertex_shader.glsl", encoding="utf-8") as vs_f:
             self.vertex_shader_str = vs_f.read()
-        with open("assets/glsl/fragment_shader.glsl", encoding="utf-8") as fs_f:
+        with open(
+            "assets/glsl/fragment_shader_path_trace.glsl", encoding="utf-8"
+        ) as fs_f:
             self.fragment_shader_str = fs_f.read()
 
         self.current_sample = 1
