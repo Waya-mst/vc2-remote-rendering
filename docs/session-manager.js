@@ -65,6 +65,7 @@ class SessionManager {
     this.maxSpp = document.getElementById("max-spp");
     this.maxSpp.addEventListener("input", function () {
       self.maxSpp.value = self.maxSpp.value.replace(/[^0-9]+/i, "");
+      self.maxSpp.value = self.maxSpp.value.replace(/^0$/i, "");
     });
 
     this.keyValue = document.getElementById("key-value");
