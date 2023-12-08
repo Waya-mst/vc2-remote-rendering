@@ -66,6 +66,20 @@ class SessionManager {
     this.maxSpp.addEventListener("input", function () {
       self.maxSpp.value = self.maxSpp.value.replace(/[^0-9]+/i, "");
     });
+
+    this.keyValue = document.getElementById("key-value");
+    this.toneMappingSlider = document.getElementById("tone-mapping-slider");
+    this.toneMappingSlider.addEventListener("input", function (e) {
+      self.keyValue.value = e.target.value;
+      if (self.websocket?.readyState !== 1) return;
+      if (self.websocket) {
+        self.websocket.send(
+          JSON.stringify({
+            keyValue: Number(self.keyValue.value),
+          })
+        );
+      }
+    });
   }
 
   init_websocket() {
@@ -122,6 +136,7 @@ class SessionManager {
           moveX: this.moveX,
           moveY: this.moveY,
           maxSpp: this.maxSpp.value,
+          keyValue: Number(this.keyValue.value),
         })
       );
     } else {
@@ -135,6 +150,7 @@ class SessionManager {
             moveX: this.moveX,
             moveY: this.moveY,
             maxSpp: this.maxSpp.value,
+            keyValue: Number(this.keyValue.value),
           })
         );
       });

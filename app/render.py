@@ -46,6 +46,7 @@ class Context:
         self.move_x = 0
         self.move_y = 0
         self.max_spp = 0
+        self.key_value = 0.18
 
         self.switch = 0
         self.output_image = None
@@ -176,7 +177,7 @@ class Context:
         program["input_image"].value = Context.TEXTURE_UNIT_INPUT_IMAGE
         program["luminance_average"].value = luminance_average
         program["luminance_max"].value = luminance_max
-        program["key_value"].value = 0.18
+        program["key_value"].value = self.key_value
 
         self.fbo = self.context.framebuffer(
             [

@@ -65,6 +65,8 @@ class WebSocket:
                 self.context.move_y = message["moveY"]
             if "maxSpp" in message:
                 self.context.max_spp = message["maxSpp"]
+            if "keyValue" in message:
+                self.context.key_value = message["keyValue"]
 
             for task in asyncio.all_tasks():
                 if task.get_coro().__name__ == "task" and not task.done():
