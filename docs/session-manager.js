@@ -18,14 +18,14 @@ class SessionManager {
     });
     this.canvas.addEventListener("pointerdown", function (e) {
       e.preventDefault();
-      if (self.websocket.readyState !== 1) return;
+      if (self.websocket?.readyState !== 1) return;
       self.mouseButton = e.button;
       self.startX = e.clientX;
       self.startY = e.clientY;
     });
     this.canvas.addEventListener("pointermove", function (e) {
       e.preventDefault();
-      if (self.websocket.readyState !== 1) return;
+      if (self.websocket?.readyState !== 1) return;
       switch (self.mouseButton) {
         case 0: // 左ボタンが押下されている状態
           self.theta += (e.clientX - self.startX) * 0.01;
@@ -127,7 +127,7 @@ class SessionManager {
 
   start() {
     console.log("start");
-    if (this.websocket && this.websocket.readyState === 1) {
+    if (this.websocket && this.websocket?.readyState === 1) {
       // WebSocket が初期化され，コネクションが開かれている場合
       this.websocket.send(
         JSON.stringify({
