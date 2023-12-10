@@ -32,7 +32,8 @@
 │   └── server.py
 ├── assets
 │   ├── glsl
-│   │   ├── fragment_shader.glsl
+│   │   ├── fragment_shader_path_trace.glsl
+│   │   ├── fragment_shader_post_process.glsl
 │   │   └── vertex_shader.glsl
 │   └── hdr
 │       └── museum_of_ethnography_1k.hdr
@@ -60,7 +61,7 @@
 ├── requirements_dev.txt
 └── requirements.txt
 
-9 directories, 23 files
+9 directories, 24 files
 ```
 
 各ファイルの内容を以下に示す：
@@ -73,9 +74,13 @@
 
   WebSocket サーバを起動する．クライアントからのリクエストに応じて WebSocket のコネクションを確立し，タスクが生成される．このタスクは，キャンセルのリクエストがくるまで停止しない無限ループとなっており，ループ中にレンダリングとその結果画像の送信が実行される．このループ中のレンダリングにおいて，サンプリングは継続される．WebSocket のコネクション確立後，クライアントから何らかのリクエストがあると，タスクをキャンセルして新しいタスクを生成する．新しいタスクが生成された時点で，サンプリング進捗は０に戻る．
 
-- assets/glsl/fragment_shader.glsl
+- assets/glsl/fragment_shader_path_trace.glsl
 
-  OpenGL のフラグメントシェーダーの内容が記述されている．GPU パストレーシングが実装されている．
+  OpenGL のフラグメントシェーダーで GPU パストレーシングが実装されている．
+
+- assets/glsl/fragment_shader_post_process.glsl
+
+  OpenGL のフラグメントシェーダーでトーンマッピングおよびガンマ変換が実装されている．
 
 - assets/glsl/vertex_shader.glsl
 
