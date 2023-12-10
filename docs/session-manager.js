@@ -2,6 +2,7 @@ class SessionManager {
   constructor() {
     const self = this;
 
+    this.websocketURL = "";
     this.websocket = null;
 
     this.mouseButton = -1;
@@ -91,9 +92,9 @@ class SessionManager {
     });
   }
 
-  init_websocket() {
+  init_websocket(url) {
     return new Promise((resolve) => {
-      const url = document.getElementById("endpoint").value;
+      this.websocketURL = url;
       const websocket = new WebSocket(url);
       websocket.onopen = () => {
         console.log("open");
@@ -136,6 +137,10 @@ class SessionManager {
 
   start() {
     console.log("start");
+    const url = document.getElementById("endpoint").value;
+    if (url !== this.websocketURL) {
+      this.end();
+    }
     if (this.websocket && this.websocket?.readyState === 1) {
       // WebSocket が初期化され，コネクションが開かれている場合
       this.websocket.send(
@@ -150,7 +155,7 @@ class SessionManager {
       );
     } else {
       // WebSocket が初期化されていないか，コネクションが開かれていない場合
-      this.init_websocket().then((ws) => {
+      this.init_websocket(url).then((ws) => {
         this.websocket = ws;
         this.websocket.send(
           JSON.stringify({
