@@ -185,7 +185,7 @@ class Context:
     def get_binary(self):
         buffer = self.read_buffer(Context.ATTACHMENT_INDEX_OUTPUT_COLOR)
         buffer = np.flipud(buffer)
-        buffer = cv2.cvtColor(buffer, cv2.COLOR_BGRA2RGBA)
+        buffer = cv2.cvtColor(buffer, cv2.COLOR_RGBA2BGRA)
         buffer = (buffer * 255).astype(np.uint8)
         is_success, binary = cv2.imencode(".jpg", buffer)
         with io.BytesIO(binary) as b:
