@@ -16,8 +16,11 @@ fragments[
 !apt-get install libnvidia-gl-$(grep -oP 'NVIDIA UNIX x86_64 Kernel Module\s+\K[\d.]+(?=\s+)' /proc/driver/nvidia/version | grep -oE '^[0-9]+')
 """
 
-fragments["write_requirements.txt"] = "%%file requirements.txt\n" + re.sub(
-    "==.*", "", open("requirements.txt", encoding="utf-8").read()
+fragments["write_requirements.txt"] = "%%file requirements.txt\n" + "".join(
+    [
+        re.sub("==.*", "", line) if not "gl" in line else line
+        for line in open("requirements.txt", encoding="utf-8").readlines()
+    ]
 )
 
 fragments[
