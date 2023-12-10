@@ -18,14 +18,14 @@ class SessionManager {
     });
     this.canvas.addEventListener("pointerdown", function (e) {
       e.preventDefault();
-      if (self.websocket.readyState !== 1) return;
+      if (self.websocket?.readyState !== 1) return;
       self.mouseButton = e.button;
       self.startX = e.clientX;
       self.startY = e.clientY;
     });
     this.canvas.addEventListener("pointermove", function (e) {
       e.preventDefault();
-      if (self.websocket.readyState !== 1) return;
+      if (self.websocket?.readyState !== 1) return;
       switch (self.mouseButton) {
         case 0: // 左ボタンが押下されている状態
           self.theta += (e.clientX - self.startX) * 0.01;
@@ -65,6 +65,29 @@ class SessionManager {
     this.maxSpp = document.getElementById("max-spp");
     this.maxSpp.addEventListener("input", function () {
       self.maxSpp.value = self.maxSpp.value.replace(/[^0-9]+/i, "");
+      self.maxSpp.value = self.maxSpp.value.replace(/^0$/i, "");
+      if (self.websocket?.readyState !== 1) return;
+      if (self.websocket) {
+        self.websocket.send(
+          JSON.stringify({
+            maxSpp: self.maxSpp.value,
+          })
+        );
+      }
+    });
+
+    this.keyValue = document.getElementById("key-value");
+    this.toneMappingSlider = document.getElementById("tone-mapping-slider");
+    this.toneMappingSlider.addEventListener("input", function (e) {
+      self.keyValue.value = e.target.value;
+      if (self.websocket?.readyState !== 1) return;
+      if (self.websocket) {
+        self.websocket.send(
+          JSON.stringify({
+            keyValue: Number(self.keyValue.value),
+          })
+        );
+      }
     });
   }
 
@@ -113,7 +136,7 @@ class SessionManager {
 
   start() {
     console.log("start");
-    if (this.websocket && this.websocket.readyState === 1) {
+    if (this.websocket && this.websocket?.readyState === 1) {
       // WebSocket が初期化され，コネクションが開かれている場合
       this.websocket.send(
         JSON.stringify({
@@ -122,6 +145,7 @@ class SessionManager {
           moveX: this.moveX,
           moveY: this.moveY,
           maxSpp: this.maxSpp.value,
+          keyValue: Number(this.keyValue.value),
         })
       );
     } else {
@@ -135,6 +159,7 @@ class SessionManager {
             moveX: this.moveX,
             moveY: this.moveY,
             maxSpp: this.maxSpp.value,
+            keyValue: Number(this.keyValue.value),
           })
         );
       });

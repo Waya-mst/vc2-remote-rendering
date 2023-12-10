@@ -11,7 +11,6 @@
 #define MIRROR (2)
 #define GLASS (3)
 
-out vec4 output_color;
 out vec4 input_color;
 out uvec4 seed_value;
 
@@ -195,17 +194,6 @@ void diffuse(inout Ray ray, const in Hit hit) {
   ray.scatter *= hit.scatter;
 }
 
-// Tone Mapping
-vec4 toneMap(const in vec4 color, const in float white) {
-  return clamp(color * (1 + color / white) / (1 + color), 0, 1);
-}
-
-// Gamma Correction
-vec4 gammaCorrect(const in vec4 color, const in float gamma) {
-  float c = 1.0f / gamma;
-  return vec4(pow(color.r, c), pow(color.g, c), pow(color.b, c), 1.0f);
-}
-
 void main() {
   xors = texture(seed_image, gl_FragCoord.xy / group_num.xy);
 
@@ -270,7 +258,6 @@ void main() {
     color_present += (color_next - color_present) / (current_sample + i);
   }
 
-  output_color = gammaCorrect(toneMap(color_present, 1000.0f), 2.2);
   input_color = color_present;
   seed_value = xors;
 }
