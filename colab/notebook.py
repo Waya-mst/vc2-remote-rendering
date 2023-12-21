@@ -93,7 +93,10 @@ fragments[
 ] = """
 from colab.tunnel import Tunnel
 
-tunnel = Tunnel()
+# Ngrok の認証トークンを指定する
+token = "secret"
+
+tunnel = Tunnel(token)
 
 # Google Colaboratory のサーバと最も低遅延で通信できるトンネルを見つける
 tunnel.calc_region_priority()

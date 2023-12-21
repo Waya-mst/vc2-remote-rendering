@@ -7,7 +7,8 @@ class Tunnel:
     # cf.) https://ngrok.com/docs/ngrok-agent/config/#region
     region_list = ["us", "eu", "ap", "au", "sa", "jp", "in"]
 
-    def __init__(self):
+    def __init__(self, token):
+        ngrok.set_auth_token(token)
         self.region_priority_list = Tunnel.region_list
 
     def calc_region_priority(self):
