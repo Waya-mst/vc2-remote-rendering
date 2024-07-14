@@ -28,6 +28,7 @@
 ```bash
 .
 ├── app
+│   ├── __main__.py
 │   ├── render.py
 │   └── server.py
 ├── assets
@@ -62,10 +63,14 @@
 ├── requirements.txt
 └── update_reference.py
 
-9 directories, 25 files
+9 directories, 26 files
 ```
 
 各ファイルの内容を以下に示す：
+
+- app/\_\_main\_\_.py
+
+  ModernGL が動作する環境の情報を出力するためのスクリプト．python -m app で実行する．
 
 - app/render.py
 
