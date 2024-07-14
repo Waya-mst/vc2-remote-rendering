@@ -1,6 +1,6 @@
 PYTHON_FILES=$(shell \
 	find . \
-	-path "./venv" -prune -o \
+	-path "./venv" -prune -o -path "./app/__main__.py" -prune -o \
 	-type f -name "*.py" \
 	-exec echo -n {}" " \; \
 )
