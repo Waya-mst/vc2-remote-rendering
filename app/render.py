@@ -164,14 +164,14 @@ class Context:
         self.switch = ~self.switch & 1
         self.context.sampler(
             texture=self.input_image_list[self.switch],
-            filter=(moderngl.NEAREST, moderngl.NEAREST),
+            filter=(moderngl.Context.NEAREST, moderngl.Context.NEAREST),
         ).use(Context.ATTACHMENT_INDEX_INPUT_COLOR)
         self.context.sampler(
             texture=self.seed_image_list[self.switch],
-            filter=(moderngl.NEAREST, moderngl.NEAREST),
+            filter=(moderngl.Context.NEAREST, moderngl.Context.NEAREST),
         ).use(Context.ATTACHMENT_INDEX_SEED_VALUE)
         self.context.clear()
-        self.vao_path_trace.render(moderngl.TRIANGLES)
+        self.vao_path_trace.render(moderngl.Context.TRIANGLES)
 
     def post_process(self, luminance_average, luminance_max, program):
         program["input_image"].value = Context.TEXTURE_UNIT_INPUT_IMAGE
@@ -190,14 +190,14 @@ class Context:
         self.switch = ~self.switch & 1
         self.context.sampler(
             texture=self.input_image_list[self.switch],
-            filter=(moderngl.NEAREST, moderngl.NEAREST),
+            filter=(moderngl.Context.NEAREST, moderngl.Context.NEAREST),
         ).use(Context.ATTACHMENT_INDEX_INPUT_COLOR)
         self.context.sampler(
             texture=self.seed_image_list[self.switch],
-            filter=(moderngl.NEAREST, moderngl.NEAREST),
+            filter=(moderngl.Context.NEAREST, moderngl.Context.NEAREST),
         ).use(Context.ATTACHMENT_INDEX_SEED_VALUE)
         self.context.clear()
-        self.vao_post_process.render(moderngl.TRIANGLES)
+        self.vao_post_process.render(moderngl.Context.TRIANGLES)
 
     def read_buffer(self, attachment):
         if self.fbo is None:

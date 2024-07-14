@@ -33,7 +33,7 @@ fragments[
 fragments[
     "show_moderngl_config"
 ] = """
-!python -m moderngl
+!curl -sL https://raw.githubusercontent.com/MsrOhkwr/vc2-remote-rendering/main/app/__main__.py | python
 """
 
 fragments[

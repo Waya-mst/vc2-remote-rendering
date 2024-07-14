@@ -139,7 +139,7 @@ jobs:
           . venv/bin/activate
           pip install -r requirements_dev.txt
           pip install -r requirements.txt
-          python -m moderngl
+          python -m app
           pytest -s
           deactivate
       - run: echo "🍏 This job's status is ${{ job.status }}."
@@ -168,7 +168,7 @@ jobs:
           . venv/bin/activate
           pip install -r requirements_dev.txt
           pip install -r requirements.txt
-          python -m moderngl
+          python -m app
           pytest -s
           deactivate
       - run: echo "🍏 This job's status is ${{ job.status }}."
@@ -202,6 +202,6 @@ jobs:
           $env:LIBGL_ALWAYS_SOFTWARE = "1"
           pip install -r requirements_dev.txt
           pip install -r requirements.txt
-          python -m moderngl
+          python -m app
           pytest -s
       - run: echo "🍏 This job's status is ${{ job.status }}."
