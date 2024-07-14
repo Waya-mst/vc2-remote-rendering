@@ -11,7 +11,7 @@ jsonschema-specifications==2023.7.1
 jupyter_core==5.3.1
 moderngl==5.10.0
 mypy-extensions==1.0.0
-nbformat==5.9.2
+nbformat==5.10.4
 numpy==2.0.0
 opencv-python-headless==4.10.0.84
 packaging==23.1
