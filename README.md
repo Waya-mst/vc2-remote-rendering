@@ -59,9 +59,10 @@
 ├── one_by_one_push.py
 ├── README.md
 ├── requirements_dev.txt
-└── requirements.txt
+├── requirements.txt
+└── update_reference.py
 
-9 directories, 24 files
+9 directories, 25 files
 ```
 
 各ファイルの内容を以下に示す：
@@ -145,6 +146,10 @@
 - requirements_dev.txt
 
   アプリケーションの開発に必要な python のパッケージが記述されている．
+
+- update_reference.py
+
+  自動テストに用いる参照画像を生成する．
 
 ## 仮想環境の構築
 
@@ -259,6 +264,10 @@ Lint: `make pyflakes`
 ### Pytest の実行
 
 `pytest`
+
+### 参照画像の更新
+
+`make reference`
 
 ### one-by-one push
 

@@ -246,11 +246,15 @@ class Context:
 
         self.switch = ~self.switch & 1
 
-    def get_binary(self):
+    def get_buffer(self):
         buffer = self.read_buffer(Context.ATTACHMENT_INDEX_OUTPUT_COLOR)
         buffer = np.flipud(buffer)
         buffer = cv2.cvtColor(buffer, cv2.COLOR_RGBA2BGRA)
         buffer = (buffer * 255).astype(np.uint8)
+        return buffer
+
+    def get_binary(self):
+        buffer = self.get_buffer()
         is_success, binary = cv2.imencode(".jpg", buffer)
         with io.BytesIO(binary) as b:
             return b.getvalue()
