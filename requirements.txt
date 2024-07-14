@@ -1,4 +1,4 @@
-glcontext==2.4.0
+glcontext==2.5.0
 moderngl==5.8.2
 numpy==1.25.2
 opencv-python==4.8.0.76
