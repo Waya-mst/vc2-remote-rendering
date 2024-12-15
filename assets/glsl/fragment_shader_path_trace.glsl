@@ -107,6 +107,7 @@ bool hitSphere(const in Sphere sphere, const in Ray ray, inout Hit hit) {
 
 // 鏡面
 void mirror(inout Ray ray, const in Hit hit) {
+  float dottheta;
   if (dot(-ray.direction, hit.normal) < 0) {
     ray.depth = DEPTH_MAX;
     return;
@@ -114,7 +115,8 @@ void mirror(inout Ray ray, const in Hit hit) {
   ray.depth++;
   ray.origin = hit.position + hit.normal * DELTA;
   // 課題1：鏡面の作成
-  // ray.direction =
+  dottheta = dot(-(ray.direction), hit.normal);
+  ray.direction = ray.direction + 2 * dottheta * hit.normal;
   ray.scatter *= hit.scatter;
 }
 
@@ -206,7 +208,7 @@ void main() {
 
   const int n_sphere = 2;
   const Sphere spheres[n_sphere] =
-      Sphere[n_sphere](Sphere(vec3(0.0f), 4.0f, vec3(0.75f), vec3(0), DIFFUSE),
+      Sphere[n_sphere](Sphere(vec3(0.0f), 4.0f, vec3(0.75f), vec3(0), MIRROR),
                        Sphere(vec3(0.0f, -10000.05f, 0.0f), 9996.0f,
                               vec3(0.75f), vec3(0), DIFFUSE));
 
