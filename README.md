@@ -1,6 +1,9 @@
 # VC2 Remote Rendering
 
 ## クイックスタート
+```bash
+conda env create -f environment.yml
+```
 
 ### サーバ
 
