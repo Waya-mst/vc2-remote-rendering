@@ -145,7 +145,7 @@ void glass(inout Ray ray, const in Hit hit) {
   } else {
     ray.origin = hit.position - N * DELTA;
     // 課題2：ガラス面の作成
-    // ray.direction =
+    ray.direction = normalize(n*ray.direction + N * (n * t - sqrt(1 - n * n * (1 - dot(-ray.direction, hit.normal) * dot(-ray.direction, hit.normal)))));
     ray.scatter *= hit.scatter;
   }
 }
@@ -208,7 +208,7 @@ void main() {
 
   const int n_sphere = 2;
   const Sphere spheres[n_sphere] =
-      Sphere[n_sphere](Sphere(vec3(0.0f), 4.0f, vec3(0.75f), vec3(0), MIRROR),
+      Sphere[n_sphere](Sphere(vec3(0.0f), 4.0f, vec3(0.75f), vec3(0), GLASS),
                        Sphere(vec3(0.0f, -10000.05f, 0.0f), 9996.0f,
                               vec3(0.75f), vec3(0), DIFFUSE));
 
